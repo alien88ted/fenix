@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Real-time documentation and code examples"
+    },
+    "prisma": {
+      "command": "npx",
+      "args": ["-y", "prisma", "mcp"],
+      "description": "AI-assisted database management with Prisma"
+    },
+    "plasma-security": {
+      "command": "npx",
+      "args": ["-y", "@prisma/plasma-mcp"],
+      "description": "Security validation and threat detection"
+    }
+  }
+}

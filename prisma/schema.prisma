@@ -1,0 +1,135 @@
+// Fenix Wallet - Production-Ready Prisma Schema
+// Optimized for PlanetScale PostgreSQL with best practices
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma" // PlanetScale compatibility
+}
+
+// Core User model - integrates with Privy authentication
+model User {
+  id            String    @id @default(cuid())
+  privyId       String    @unique // Privy user ID for authentication
+  email         String?   @unique
+  name          String?
+  avatar        String?
+  phoneNumber   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  wallets       Wallet[]
+  transactions  Transaction[]
+  sessions      Session[]
+  
+  @@index([privyId])
+  @@index([email])
+  @@map("users")
+}
+
+// Wallet model - stores crypto wallet information
+model Wallet {
+  id            String    @id @default(cuid())
+  userId        String
+  address       String    @unique
+  type          WalletType @default(EMBEDDED)
+  chainId       Int       @default(1)
+  isDefault     Boolean   @default(false)
+  label         String?
+  balance       Decimal?  @db.Decimal(20, 8)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sentTransactions     Transaction[] @relation("SentTransactions")
+  receivedTransactions Transaction[] @relation("ReceivedTransactions")
+  
+  @@index([userId])
+  @@index([address])
+  @@map("wallets")
+}
+
+// Transaction model - comprehensive transaction tracking
+model Transaction {
+  id            String    @id @default(cuid())
+  userId        String
+  fromWalletId  String?
+  toWalletId    String?
+  fromAddress   String
+  toAddress     String
+  amount        Decimal   @db.Decimal(20, 8)
+  currency      String    @default("USDT")
+  type          TransactionType
+  status        TransactionStatus @default(PENDING)
+  txHash        String?   @unique
+  chainId       Int
+  gasUsed       String?
+  gasPrice      String?
+  blockNumber   Int?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromWallet    Wallet?   @relation("SentTransactions", fields: [fromWalletId], references: [id])
+  toWallet      Wallet?   @relation("ReceivedTransactions", fields: [toWalletId], references: [id])
+  
+  @@index([userId])
+  @@index([fromWalletId])
+  @@index([toWalletId])
+  @@index([txHash])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("transactions")
+}
+
+// Session model - secure session management
+model Session {
+  id            String    @id @default(cuid())
+  userId        String
+  token         String    @unique
+  ipAddress     String?
+  userAgent     String?
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// Enums for type safety
+enum WalletType {
+  EMBEDDED      // Privy embedded wallet
+  EXTERNAL      // MetaMask, WalletConnect, etc.
+  IMPORTED      // Imported via private key/seed phrase
+}
+
+enum TransactionType {
+  SEND
+  RECEIVE
+  SWAP
+  CASH_IN
+  CASH_OUT
+  FEE
+  REWARD
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
