@@ -15,7 +15,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Fenix - Secure Crypto Wallet",
   description: "Send, receive, and manage your USDT with bank-grade security powered by Privy.",
-  keywords: "crypto wallet, USDT, blockchain, Web3, DeFi, PLASMA, XPL",
+  keywords: "crypto wallet, USDT, blockchain, Web3, DeFi, secure wallet",
   authors: [{ name: "Fenix Team" }],
   manifest: "/site.webmanifest",
   themeColor: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Fenix Wallet - Secure Crypto Wallet",
-    description: "Your secure gateway to Web3 with PLASMA network integration",
+    description: "Your secure gateway to Web3 with enterprise-grade security",
     type: "website",
     siteName: "Fenix Wallet",
     images: [

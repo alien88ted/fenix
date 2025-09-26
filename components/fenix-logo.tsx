@@ -7,6 +7,7 @@ interface FenixLogoProps {
   size?: "sm" | "md" | "lg" | "xl"
   variant?: "default" | "icon" | "text" | "monochrome"
   animate?: boolean
+  showStatus?: boolean
 }
 
 const sizeClasses = {
@@ -20,7 +21,8 @@ export function FenixLogo({
   className,
   size = "md",
   variant = "default",
-  animate = false
+  animate = false,
+  showStatus = false
 }: FenixLogoProps) {
   const logoClasses = cn(
     sizeClasses[size],
@@ -109,15 +111,35 @@ export function FenixLogo({
         <div className={sizeClasses[size]}>
           <FenixLogo variant="icon" size={size} />
         </div>
-        <span className={cn(
-          "font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent",
-          size === "sm" && "text-sm",
-          size === "md" && "text-lg",
-          size === "lg" && "text-2xl",
-          size === "xl" && "text-4xl"
-        )}>
-          Fenix
-        </span>
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            "font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent",
+            size === "sm" && "text-sm",
+            size === "md" && "text-lg",
+            size === "lg" && "text-2xl",
+            size === "xl" && "text-4xl"
+          )}>
+            Fenix
+          </span>
+          {showStatus && (
+            <div className="relative ml-1">
+              <div className={cn(
+                "bg-success rounded-full",
+                size === "sm" && "w-1 h-1",
+                size === "md" && "w-1.5 h-1.5",
+                size === "lg" && "w-2 h-2",
+                size === "xl" && "w-2.5 h-2.5"
+              )} />
+              <div className={cn(
+                "absolute inset-0 bg-success rounded-full animate-ping opacity-75",
+                size === "sm" && "w-1 h-1",
+                size === "md" && "w-1.5 h-1.5",
+                size === "lg" && "w-2 h-2",
+                size === "xl" && "w-2.5 h-2.5"
+              )} />
+            </div>
+          )}
+        </div>
       </div>
     )
   }

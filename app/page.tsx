@@ -120,7 +120,7 @@ export default function FenixWallet() {
       // Send real transaction via PLASMA network
       const wallet = privyWallets[0]
       if (wallet && wallet.address) {
-        console.log('Sending PLASMA transaction:', {
+        console.log('Sending transaction:', {
           from: wallet.address,
           to: sendData.address,
           amount: sendData.amount
@@ -342,7 +342,7 @@ export default function FenixWallet() {
               <WalletCard 
                 balance={balance}
                 address={walletAddress}
-                network={primaryWallet ? `Chain ${primaryWallet.chainId}` : 'PLASMA Network'}
+                network="Secure Network"
                 isLoading={isLoadingWallets}
                 className="animate-slide-up"
               />

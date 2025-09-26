@@ -16,7 +16,7 @@ interface WalletCardProps {
 export function WalletCard({ 
   balance, 
   address, 
-  network = 'PLASMA Network',
+  network = 'Secure Network',
   isLoading = false,
   className 
 }: WalletCardProps) {
@@ -73,7 +73,7 @@ export function WalletCard({
               <div className="absolute inset-0 w-1.5 h-1.5 bg-success rounded-full animate-ping" />
             </div>
             <span className="text-xs font-medium text-muted-foreground">
-              {network} • Connected
+              USDT • {network}
             </span>
           </div>
           
