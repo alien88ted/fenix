@@ -8,14 +8,23 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Image from 'next/image';
+import { useWalletData } from '@/hooks/useWalletData';
 
 export default function Dashboard() {
   const router = useRouter();
   const { ready, authenticated, user, exportWallet } = usePrivy();
-  const { wallets } = useWallets();
+  const { wallets: privyWallets } = useWallets();
+  
+  // Use real wallet data from database
+  const {
+    wallets: dbWallets,
+    transactions,
+    isLoading: isLoadingWallets,
+    getPrimaryWallet,
+    getTotalBalance,
+  } = useWalletData();
+  
   const [activeWallet, setActiveWallet] = useState<any>(null);
-  const [balance, setBalance] = useState('0.00');
-  const [transactions, setTransactions] = useState<any[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [exportedKey, setExportedKey] = useState<string | null>(null);
 
@@ -26,22 +35,11 @@ export default function Dashboard() {
   }, [ready, authenticated, router]);
 
   useEffect(() => {
-    if (wallets.length > 0) {
-      setActiveWallet(wallets[0]);
-      // Fetch balance for active wallet
-      fetchWalletBalance(wallets[0].address);
+    if (dbWallets.length > 0) {
+      const primaryWallet = getPrimaryWallet();
+      setActiveWallet(primaryWallet || dbWallets[0]);
     }
-  }, [wallets]);
-
-  const fetchWalletBalance = async (address: string) => {
-    try {
-      const response = await fetch(`/api/wallet/balance?address=${address}`);
-      const data = await response.json();
-      setBalance(data.balance || '0.00');
-    } catch (error) {
-      console.error('Failed to fetch balance:', error);
-    }
-  };
+  }, [dbWallets, getPrimaryWallet]);
 
   const handleExportWallet = async () => {
     if (!activeWallet) return;
@@ -130,7 +128,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Balance:</span>
-                  <span className="text-lg font-bold">{balance} USDT</span>
+                  <span className="text-lg font-bold">{activeWallet?.balances?.USDT || getTotalBalance('USDT')} USDT</span>
                 </div>
               </div>
             )}
