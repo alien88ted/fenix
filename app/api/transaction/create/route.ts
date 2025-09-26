@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrivyClient } from '@privy-io/server-auth';
-import { prisma, handlePrismaError } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { Decimal } from '@prisma/client/runtime/library';
 
 const privyClient = new PrivyClient(
@@ -21,7 +21,16 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    const privyAuth = await privyClient.verifyAuthToken(idToken);
+    let privyAuth;
+    try {
+      privyAuth = await privyClient.verifyAuthToken(idToken);
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
     
     if (!privyAuth) {
       return NextResponse.json(
@@ -53,8 +62,8 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Find user
-    const user = await prisma.user.findUnique({
+    // Find or create user
+    let user = await prisma.user.findUnique({
       where: { privyId: privyAuth.userId },
       include: {
         wallets: true,
@@ -62,10 +71,15 @@ export async function POST(req: NextRequest) {
     });
     
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      // Create user if doesn't exist
+      user = await prisma.user.create({
+        data: {
+          privyId: privyAuth.userId,
+        },
+        include: {
+          wallets: true,
+        },
+      });
     }
     
     // Find wallets
@@ -141,8 +155,8 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.error('Transaction creation error:', error);
-    return handlePrismaError(error) || NextResponse.json(
-      { error: 'Failed to create transaction' },
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create transaction' },
       { status: 500 }
     );
   }

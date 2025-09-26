@@ -1,6 +1,6 @@
 "use client"
 
-import { FenixLogo } from "@/components/fenix-logo"
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function DemoPage() {
@@ -12,52 +12,68 @@ export default function DemoPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
             <CardContent className="p-8 text-center space-y-4">
-              <h2 className="text-xl font-semibold">Default Logo</h2>
-              <FenixLogo size="lg" />
+              <h2 className="text-xl font-semibold">PNG Logo - Small</h2>
+              <Image
+                src="/fenix-logo.png"
+                alt="Fenix Logo"
+                width={64}
+                height={64}
+                className="mx-auto"
+              />
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="p-8 text-center space-y-4">
-              <h2 className="text-xl font-semibold">With Status Indicator</h2>
-              <FenixLogo size="lg" showStatus={true} />
+              <h2 className="text-xl font-semibold">PNG Logo - Medium</h2>
+              <Image
+                src="/fenix-logo.png"
+                alt="Fenix Logo"
+                width={96}
+                height={96}
+                className="mx-auto"
+              />
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="p-8 text-center space-y-4">
-              <h2 className="text-xl font-semibold">Icon Only</h2>
-              <FenixLogo variant="icon" size="lg" />
+              <h2 className="text-xl font-semibold">PNG Logo - Large</h2>
+              <Image
+                src="/fenix-logo.png"
+                alt="Fenix Logo"
+                width={128}
+                height={128}
+                className="mx-auto"
+              />
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="p-8 text-center space-y-4">
-              <h2 className="text-xl font-semibold">Animated with Status</h2>
-              <FenixLogo size="lg" animate={true} showStatus={true} />
+              <h2 className="text-xl font-semibold">PNG Logo - Extra Large</h2>
+              <Image
+                src="/fenix-logo.png"
+                alt="Fenix Logo"
+                width={160}
+                height={160}
+                className="mx-auto"
+              />
             </CardContent>
           </Card>
         </div>
 
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-semibold">All Sizes with Status</h2>
-          <div className="flex items-end justify-center gap-8">
-            <div className="text-center space-y-2">
-              <FenixLogo size="sm" showStatus={true} />
-              <p className="text-xs text-muted-foreground">Small</p>
-            </div>
-            <div className="text-center space-y-2">
-              <FenixLogo size="md" showStatus={true} />
-              <p className="text-xs text-muted-foreground">Medium</p>
-            </div>
-            <div className="text-center space-y-2">
-              <FenixLogo size="lg" showStatus={true} />
-              <p className="text-xs text-muted-foreground">Large</p>
-            </div>
-            <div className="text-center space-y-2">
-              <FenixLogo size="xl" showStatus={true} />
-              <p className="text-xs text-muted-foreground">Extra Large</p>
-            </div>
+          <h2 className="text-2xl font-semibold">Header Style Logo</h2>
+          <div className="flex items-center justify-center gap-4">
+            <Image
+              src="/fenix-logo.png"
+              alt="Fenix Logo"
+              width={32}
+              height={32}
+              className="logo-hover transition-all duration-150"
+            />
+            <h3 className="text-xl font-semibold">Fenix</h3>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrivyClient } from '@privy-io/server-auth';
-import { prisma, handlePrismaError } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 const privyClient = new PrivyClient(
   process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
@@ -20,9 +20,11 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    const privyAuth = await privyClient.verifyAuthToken(idToken);
-    
-    if (!privyAuth) {
+    let privyAuth;
+    try {
+      privyAuth = await privyClient.verifyAuthToken(idToken);
+    } catch (error) {
+      console.error('Token verification failed:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
@@ -32,8 +34,8 @@ export async function POST(req: NextRequest) {
     // Get request body
     const { chainType = 'ethereum', createSmartWallet = false } = await req.json();
     
-    // Find user in database
-    const user = await prisma.user.findUnique({
+    // Find or create user in database
+    let user = await prisma.user.findUnique({
       where: { privyId: privyAuth.userId },
       include: {
         wallets: true,
@@ -41,10 +43,15 @@ export async function POST(req: NextRequest) {
     });
     
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      // Create user if doesn't exist
+      user = await prisma.user.create({
+        data: {
+          privyId: privyAuth.userId,
+        },
+        include: {
+          wallets: true,
+        },
+      });
     }
     
     // Create wallet via Privy API
@@ -87,8 +94,8 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.error('Wallet creation error:', error);
-    return handlePrismaError(error) || NextResponse.json(
-      { error: 'Failed to create wallet' },
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create wallet' },
       { status: 500 }
     );
   }

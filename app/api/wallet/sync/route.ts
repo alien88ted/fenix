@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrivyClient } from '@privy-io/server-auth';
-import { prisma, handlePrismaError } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // Initialize Privy client
 const privyClient = new PrivyClient(
@@ -22,7 +22,16 @@ export async function POST(req: NextRequest) {
     }
     
     // Verify the token with Privy
-    const privyUser = await privyClient.verifyAuthToken(idToken);
+    let privyUser;
+    try {
+      privyUser = await privyClient.verifyAuthToken(idToken);
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
     
     if (!privyUser) {
       return NextResponse.json(
@@ -31,8 +40,8 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Find user in database
-    const user = await prisma.user.findUnique({
+    // Find or create user in database
+    let user = await prisma.user.findUnique({
       where: { privyId: privyUser.userId },
       include: {
         wallets: true,
@@ -40,38 +49,64 @@ export async function POST(req: NextRequest) {
     });
     
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      // Get full user details from Privy
+      const fullPrivyUser = await privyClient.getUser(privyUser.userId);
+      
+      // Create new user
+      user = await prisma.user.create({
+        data: {
+          privyId: privyUser.userId,
+          email: fullPrivyUser.email?.address || null,
+          name: fullPrivyUser.google?.name || fullPrivyUser.twitter?.name || null,
+        },
+        include: {
+          wallets: true,
+        },
+      });
     }
     
     // Get user's full details from Privy
     const fullPrivyUser = await privyClient.getUser(privyUser.userId);
     
-    // Sync embedded wallets
-    const embeddedWallets = fullPrivyUser.linkedAccounts.filter(
-      account => account.type === 'wallet' && account.walletClientType === 'privy'
+    // Sync wallets - filter for wallet type accounts
+    const walletAccounts = fullPrivyUser.linkedAccounts.filter(
+      (account): account is any => account.type === 'wallet'
     );
     
     const syncedWallets = [];
     
-    for (const wallet of embeddedWallets) {
+    for (const wallet of walletAccounts) {
+      // Type guard to ensure we have wallet properties
+      if (!wallet || typeof wallet !== 'object') continue;
+      
+      // Safely access wallet properties
+      const walletAddress = (wallet as any).address;
+      if (!walletAddress) continue;
+      
+      const walletChainId = (wallet as any).chainId || 1;
+      const walletClientType = (wallet as any).walletClientType || 'unknown';
+      const walletClient = (wallet as any).walletClient || 'External';
+      
       // Check if wallet exists in database
       let dbWallet = await prisma.wallet.findUnique({
-        where: { address: wallet.address.toLowerCase() },
+        where: { address: walletAddress.toLowerCase() },
       });
       
       if (!dbWallet) {
+        // Determine wallet type
+        const walletType = walletClientType === 'privy' ? 'EMBEDDED' : 'EXTERNAL';
+        
         // Create new wallet in database
         dbWallet = await prisma.wallet.create({
           data: {
             userId: user.id,
-            address: wallet.address.toLowerCase(),
-            type: 'EMBEDDED',
-            chainId: wallet.chainId || 1,
+            address: walletAddress.toLowerCase(),
+            type: walletType,
+            chainId: walletChainId,
             isDefault: user.wallets.length === 0, // First wallet is default
-            label: `Embedded Wallet ${user.wallets.length + 1}`,
+            label: walletType === 'EMBEDDED' 
+              ? `Embedded Wallet ${user.wallets.length + 1}`
+              : `${walletClient} Wallet`,
           },
         });
       } else {
@@ -79,34 +114,8 @@ export async function POST(req: NextRequest) {
         dbWallet = await prisma.wallet.update({
           where: { id: dbWallet.id },
           data: {
-            chainId: wallet.chainId || dbWallet.chainId,
+            chainId: walletChainId,
             updatedAt: new Date(),
-          },
-        });
-      }
-      
-      syncedWallets.push(dbWallet);
-    }
-    
-    // Sync external wallets
-    const externalWallets = fullPrivyUser.linkedAccounts.filter(
-      account => account.type === 'wallet' && account.walletClientType !== 'privy'
-    );
-    
-    for (const wallet of externalWallets) {
-      let dbWallet = await prisma.wallet.findUnique({
-        where: { address: wallet.address.toLowerCase() },
-      });
-      
-      if (!dbWallet) {
-        dbWallet = await prisma.wallet.create({
-          data: {
-            userId: user.id,
-            address: wallet.address.toLowerCase(),
-            type: 'EXTERNAL',
-            chainId: wallet.chainId || 1,
-            isDefault: false,
-            label: wallet.walletClient || 'External Wallet',
           },
         });
       }
@@ -127,8 +136,8 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     console.error('Wallet sync error:', error);
-    return handlePrismaError(error) || NextResponse.json(
-      { error: 'Failed to sync wallets' },
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to sync wallets' },
       { status: 500 }
     );
   }

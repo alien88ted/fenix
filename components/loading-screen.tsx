@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import { FenixLogo } from './fenix-logo';
 
 export function LoadingScreen() {
   const [dots, setDots] = useState('');
@@ -26,13 +26,10 @@ export function LoadingScreen() {
           {/* Logo with glow effect */}
           <div className="relative">
             <div className="absolute inset-0 bg-primary/30 blur-3xl animate-pulse" />
-            <Image
-              src="/fenix-logo.png"
-              alt="Fenix"
-              width={80}
-              height={80}
-              className="relative z-10 animate-float"
-              priority
+            <FenixLogo 
+              size={80} 
+              className="relative z-10 animate-float logo-glow" 
+              animate 
             />
           </div>
           

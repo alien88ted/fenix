@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { usePrivy, useLogin, useLogout, useWallets } from "@privy-io/react-auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { UserDropdown } from "@/components/user-dropdown"
 import { plasmaAPI, type PlasmaWalletData, type PlasmaTransaction } from "@/lib/plasma-api"
@@ -13,7 +13,7 @@ import { WalletCard } from "@/components/wallet-card"
 import { LoadingScreen } from "@/components/loading-screen"
 import { Toaster } from "@/components/ui/sonner"
 import { handleSuccess, handleError } from "@/lib/utils/error-handler"
-import { FenixLogo, FenixLoading } from "@/components/fenix-logo"
+import { FenixLogo } from "@/components/fenix-logo"
 
 export default function FenixWallet() {
   const { ready, authenticated, user } = usePrivy()
@@ -276,7 +276,7 @@ export default function FenixWallet() {
           <CardContent className="p-8 space-y-6">
             <div className="text-center space-y-4">
               <div className="relative mx-auto w-fit">
-                <Image src="/fenix-logo.png" alt="Fenix" width={64} height={64} className="w-16 h-16 float" priority />
+                <FenixLogo size={64} className="logo-glow" animate />
               </div>
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tight">Welcome to Fenix</h1>
@@ -316,15 +316,26 @@ export default function FenixWallet() {
         <div className="flex items-center justify-between px-6 py-5 max-w-sm mx-auto">
           <div className="flex items-center gap-3">
             {currentView !== "home" && renderBackButton()}
-            <div className="relative">
-              <Image src="/fenix-logo.png" alt="Fenix" width={32} height={32} className="w-8 h-8 float" priority />
-            </div>
-            <h1 className="text-lg font-semibold tracking-tight">
-              {currentView === "home" && "Fenix"}
-              {currentView === "send" && "Send USDT"}
-              {currentView === "receive" && "Receive"}
-              {currentView === "services" && "Services"}
-            </h1>
+            <img
+              src="/fenix-logo.png"
+              alt="Fenix"
+              width={32}
+              height={32}
+              className="logo-hover transition-all duration-150"
+            />
+            {currentView !== "home" && (
+              <>
+                <div className="h-6 w-px bg-border/30" />
+                <h1 className="text-base font-medium text-foreground/90">
+                  {currentView === "send" && "Send USDT"}
+                  {currentView === "receive" && "Receive"}
+                  {currentView === "services" && "Services"}
+                  {currentView === "cashin" && "Cash In"}
+                  {currentView === "paymerchant" && "Pay Merchant"}
+                  {currentView === "bills" && "Pay Bills"}
+                </h1>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-3">

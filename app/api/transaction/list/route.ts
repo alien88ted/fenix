@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrivyClient } from '@privy-io/server-auth';
-import { prisma, handlePrismaError } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 const privyClient = new PrivyClient(
   process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
@@ -20,7 +20,16 @@ export async function GET(req: NextRequest) {
       );
     }
     
-    const privyAuth = await privyClient.verifyAuthToken(idToken);
+    let privyAuth;
+    try {
+      privyAuth = await privyClient.verifyAuthToken(idToken);
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
     
     if (!privyAuth) {
       return NextResponse.json(
@@ -36,8 +45,8 @@ export async function GET(req: NextRequest) {
     const walletAddress = searchParams.get('wallet');
     const status = searchParams.get('status');
     
-    // Find user
-    const user = await prisma.user.findUnique({
+    // Find or create user
+    let user = await prisma.user.findUnique({
       where: { privyId: privyAuth.userId },
       include: {
         wallets: true,
@@ -45,10 +54,15 @@ export async function GET(req: NextRequest) {
     });
     
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      // Create user if doesn't exist
+      user = await prisma.user.create({
+        data: {
+          privyId: privyAuth.userId,
+        },
+        include: {
+          wallets: true,
+        },
+      });
     }
     
     // Build query conditions
@@ -123,8 +137,8 @@ export async function GET(req: NextRequest) {
     
   } catch (error) {
     console.error('Transaction list error:', error);
-    return handlePrismaError(error) || NextResponse.json(
-      { error: 'Failed to fetch transactions' },
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch transactions' },
       { status: 500 }
     );
   }

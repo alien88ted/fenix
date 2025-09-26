@@ -1,181 +1,146 @@
 # Fenix Wallet Setup Guide
 
-## 🚀 Quick Start
+## Prerequisites
 
-1. **Clone and Install**
-   ```bash
-   git clone https://github.com/alien88ted/fenix.git
-   cd fenix
-   npm install
-   ```
+- Node.js 18+ and npm/yarn
+- Git
 
-2. **Environment Configuration**
-   ```bash
-   cp .env.example .env.local
-   ```
+## Quick Start
 
-3. **Configure Privy Authentication**
-   - Go to [dashboard.privy.io](https://dashboard.privy.io)
-   - Create a new app or select existing
-   - Copy your App ID (starts with 'cl...')
-   - Add to `.env.local`:
-     ```
-     NEXT_PUBLIC_PRIVY_APP_ID=cl_your_app_id_here
-     ```
-
-4. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-
-## 🔗 PLASMA/XPL Network Integration
-
-### Current Status
-✅ **Implemented:**
-- PLASMA API integration framework
-- Real-time balance fetching
-- Transaction history
-- Send/receive functionality
-- Network status indicators
-
-### PLASMA Network Configuration
-
-The app is configured to work with PLASMA/XPL network:
-
-**Network Details:**
-- Chain ID: `1007`
-- RPC URL: `https://rpc.plasma.network`
-- Explorer: `https://explorer.plasma.network`
-
-### Setting up PLASMA API
-
-1. **Get PLASMA API Key** (Optional)
-   ```bash
-   # Add to .env.local
-   NEXT_PUBLIC_PLASMA_API_KEY=your_api_key_here
-   ```
-
-2. **The app will automatically:**
-   - Try official PLASMA API first
-   - Fallback to direct RPC calls
-   - Generate realistic demo data if APIs unavailable
-
-### Real Data Integration
-
-The `PlasmaAPI` class (`lib/plasma-api.ts`) handles:
-
-**Balance Fetching:**
-```typescript
-await plasmaAPI.getBalance(walletAddress)
+### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd minimal-portfolio
 ```
 
-**Transaction History:**
-```typescript
-await plasmaAPI.getTransactions(walletAddress, 10)
+### 2. Install dependencies
+```bash
+npm install
+# or
+yarn install
 ```
 
-**Sending Transactions:**
-```typescript
-await plasmaAPI.sendTransaction(from, to, amount)
+### 3. Set up environment variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Required: Privy Configuration
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
+PRIVY_APP_SECRET=your_privy_app_secret_here
+
+# Optional: Database (defaults to SQLite for development)
+# DATABASE_URL=postgresql://...
 ```
 
-### Customizing for Your Network
+#### Getting Privy Credentials:
 
-To modify for different networks, update `lib/plasma-api.ts`:
+1. Go to [Privy Dashboard](https://dashboard.privy.io)
+2. Create a new app or select existing one
+3. Copy your **App ID** from the dashboard
+4. Go to Settings → API Keys
+5. Copy your **App Secret**
 
-```typescript
-const PLASMA_NETWORK: PlasmaNetworkInfo = {
-  name: 'YOUR_NETWORK',
-  chainId: YOUR_CHAIN_ID,
-  rpcUrl: 'https://your-rpc-url.com',
-  explorerUrl: 'https://your-explorer.com'
-};
+### 4. Initialize the database
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Create database and apply schema
+npx prisma db push
+
+# (Optional) View database in Prisma Studio
+npx prisma studio
 ```
 
-## 🎯 Features Implemented
+### 5. Run the development server
 
-### ✅ Core Wallet Functions
-- **Authentication**: Privy-powered secure login
-- **Balance Display**: Real-time PLASMA network balance
-- **Send USDT**: 4-step transaction flow with validation
-- **Receive**: QR codes and address sharing
-- **Transaction History**: Real blockchain data
-
-### ✅ Advanced Services
-- **Cash In/Out**: Agent finder (demo UI complete)
-- **Pay Merchant**: QR scanner integration ready
-- **Bills & Top-up**: Utility payment interface
-
-### ✅ UI/UX Excellence
-- **2025 Design System**: Apple-inspired clean aesthetics
-- **Smooth Transitions**: 150ms polished animations
-- **Mobile-First**: Responsive PWA-ready design
-- **Dark/Light Mode**: Theme switching with persistence
-
-## 🔧 Development
-
-### Key Files
-- `app/page.tsx` - Main wallet interface
-- `lib/plasma-api.ts` - Blockchain integration
-- `app/providers.tsx` - Privy configuration
-- `app/globals.css` - Design system
-
-### Testing Real Transactions
-
-1. **Demo Mode**: Works immediately with simulated data
-2. **Testnet Mode**: Configure testnet RPC in `plasma-api.ts`
-3. **Mainnet Mode**: Use production PLASMA RPC endpoints
-
-### Adding New Features
-
-The codebase is designed for easy extension:
-
-```typescript
-// Add new service flows in app/page.tsx
-{currentView === "newservice" && (
-  <YourNewServiceComponent />
-)}
+```bash
+npm run dev
+# or
+yarn dev
 ```
 
-## 🛠 Troubleshooting
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Testing
+
+### Component Tests
+Navigate to [http://localhost:3000/test](http://localhost:3000/test) to test individual components.
+
+### Full Flow Test
+Navigate to [http://localhost:3000/test/flow](http://localhost:3000/test/flow) to run comprehensive end-to-end tests.
+
+## Features
+
+- **Privy Authentication**: Social logins, email, and embedded wallets
+- **Multi-chain Support**: Ethereum, Polygon, Arbitrum, Optimism, Base
+- **Secure Wallet Management**: Embedded wallets with export capability
+- **Transaction History**: Track all wallet transactions
+- **Theme Support**: Dark/Light mode with smooth transitions
+- **Mobile-First Design**: Responsive and optimized for mobile
+
+## Troubleshooting
 
 ### Common Issues
 
-1. **Privy not loading**: Check App ID in `.env.local`
-2. **Balance not updating**: Check RPC URL connectivity
-3. **Transactions failing**: Verify wallet has sufficient gas
+1. **"PRIVY_APP_SECRET is not defined"**
+   - Make sure you've added `PRIVY_APP_SECRET` to your `.env.local` file
+   - Restart the development server after adding environment variables
 
-### Debugging
+2. **"Database connection failed"**
+   - Run `npx prisma db push` to create the database
+   - Check that the database file exists at `prisma/dev.db`
 
-Enable console logs in `plasma-api.ts` to see:
-- API requests and responses
-- Transaction status updates
-- Network connectivity issues
+3. **"No wallets syncing"**
+   - Ensure you have embedded wallets enabled in your Privy dashboard
+   - Check that the user has created an embedded wallet during login
 
-## 🚀 Production Deployment
+4. **API 500 Errors**
+   - Check that both `NEXT_PUBLIC_PRIVY_APP_ID` and `PRIVY_APP_SECRET` are set
+   - Verify the credentials are correct in the Privy dashboard
 
-### Vercel (Recommended)
-```bash
-npm run build
-vercel --prod
-```
+### Debug Mode
+
+To see detailed logs:
+1. Open browser developer console
+2. Run the flow test at `/test/flow`
+3. Export the logs and review any errors
+
+## Production Deployment
 
 ### Environment Variables for Production
-```bash
-NEXT_PUBLIC_PRIVY_APP_ID=your_production_privy_id
-NEXT_PUBLIC_PLASMA_API_KEY=your_production_api_key
+
+```env
+# Required
+NEXT_PUBLIC_PRIVY_APP_ID=your_production_app_id
+PRIVY_APP_SECRET=your_production_secret
+
+# Recommended for production
+DATABASE_URL=your_production_database_url
+NEXTAUTH_SECRET=generate_random_string
+
+# Optional: Custom RPC endpoints for better performance
+NEXT_PUBLIC_ETHEREUM_RPC_URL=your_infura_or_alchemy_url
 ```
 
-## 📝 Next Steps
+### Database Migration
 
-1. **Test with real PLASMA testnet**
-2. **Add more service providers**
-3. **Implement push notifications**
-4. **Add multi-token support**
+For production, use a managed PostgreSQL service like:
+- PlanetScale
+- Supabase
+- Neon
+- Railway
 
----
+Update your `prisma/schema.prisma` provider to `postgresql` and run migrations:
+```bash
+npx prisma migrate deploy
+```
 
-**Need Help?**
-- Check the console for detailed error logs
-- Verify all environment variables are set
-- Test with demo data first before live integration
+## Support
+
+For issues or questions:
+1. Check the [Privy Documentation](https://docs.privy.io)
+2. Review the test results at `/test/flow`
+3. Export and share the test logs for debugging

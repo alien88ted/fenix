@@ -18,16 +18,7 @@ export const metadata: Metadata = {
   keywords: "crypto wallet, USDT, blockchain, Web3, DeFi, secure wallet",
   authors: [{ name: "Fenix Team" }],
   manifest: "/site.webmanifest",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ea580c" },
-    { media: "(prefers-color-scheme: dark)", color: "#fb923c" }
-  ],
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+  metadataBase: new URL("https://fenix-wallet.vercel.app"),
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -55,15 +46,28 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" }
+      { url: "/fenix-logo.png", sizes: "16x16", type: "image/png" },
+      { url: "/fenix-logo.png", sizes: "32x32", type: "image/png" },
+      { url: "/fenix-logo.png", sizes: "any" }
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+      { url: "/fenix-logo.png", sizes: "180x180", type: "image/png" }
     ],
     other: [
-      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#ea580c" }
+      { rel: "mask-icon", url: "/fenix-logo.png", color: "#ea580c" }
+    ]
+  }
+}
+
+export function generateViewport() {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#ea580c" },
+      { media: "(prefers-color-scheme: dark)", color: "#fb923c" }
     ]
   }
 }

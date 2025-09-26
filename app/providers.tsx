@@ -60,10 +60,11 @@ export default function Providers({ children }: PropsWithChildren) {
       <PrivyProvider
         appId={privyAppId}
         config={{
-        // Enhanced embedded wallets with security
+        // CRITICAL: Create embedded wallets for ALL users automatically
         embeddedWallets: {
-          ...config.embeddedWallets,
-          requireUserPasswordOnCreate: true, // Enhanced security
+          createOnLogin: 'all-users', // This ensures EVERY user gets an embedded wallet
+          requireUserPasswordOnCreate: false, // Don't require password for smoother UX
+          showWalletUIs: true,
         },
         
         // Comprehensive login methods
