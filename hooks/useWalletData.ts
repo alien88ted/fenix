@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { getAllBalances } from '@/lib/blockchain';
+import { handleError, handleSuccess } from '@/lib/utils/error-handler';
 
 export interface WalletData {
   address: string;
@@ -37,6 +38,11 @@ export function useWalletData() {
   const [transactions, setTransactions] = useState<TransactionData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Cache refs for performance
+  const lastFetchTime = useRef<number>(0);
+  const fetchCache = useRef<Map<string, any>>(new Map());
   
   // Sync wallets with database
   const syncWallets = useCallback(async () => {

@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import Providers from "./providers"
+import { Toaster } from "@/components/ui/sonner"
+import { FaviconInjector } from "@/components/favicon-generator"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,13 +15,57 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Fenix - Secure Crypto Wallet",
   description: "Send, receive, and manage your USDT with bank-grade security powered by Privy.",
-  keywords: "crypto wallet, USDT, blockchain, Web3, DeFi",
+  keywords: "crypto wallet, USDT, blockchain, Web3, DeFi, PLASMA, XPL",
   authors: [{ name: "Fenix Team" }],
+  manifest: "/site.webmanifest",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ea580c" },
+    { media: "(prefers-color-scheme: dark)", color: "#fb923c" }
+  ],
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Fenix Wallet"
+  },
   openGraph: {
+    title: "Fenix Wallet - Secure Crypto Wallet",
+    description: "Your secure gateway to Web3 with PLASMA network integration",
+    type: "website",
+    siteName: "Fenix Wallet",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Fenix Wallet - Secure Crypto Wallet"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Fenix Wallet",
     description: "Your secure gateway to Web3",
-    type: "website",
+    images: ["/og-image.png"]
   },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+    ],
+    other: [
+      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#ea580c" }
+    ]
+  }
 }
 
 export default function RootLayout({
@@ -30,7 +76,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">
+        <FaviconInjector />
         <Providers>{children}</Providers>
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          duration={4000}
+          theme="system"
+        />
       </body>
     </html>
   )

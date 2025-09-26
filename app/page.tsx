@@ -9,6 +9,11 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { UserDropdown } from "@/components/user-dropdown"
 import { plasmaAPI, type PlasmaWalletData, type PlasmaTransaction } from "@/lib/plasma-api"
 import { useWalletData } from "@/hooks/useWalletData"
+import { WalletCard } from "@/components/wallet-card"
+import { LoadingScreen } from "@/components/loading-screen"
+import { Toaster } from "@/components/ui/sonner"
+import { handleSuccess, handleError } from "@/lib/utils/error-handler"
+import { FenixLogo, FenixLoading } from "@/components/fenix-logo"
 
 export default function FenixWallet() {
   const { ready, authenticated, user } = usePrivy()
@@ -162,10 +167,11 @@ export default function FenixWallet() {
     }, 2500)
   }
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
+      handleSuccess('Address copied to clipboard!')
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy text: ', err)
@@ -333,34 +339,13 @@ export default function FenixWallet() {
           <div className="space-y-8">
             <section aria-labelledby="balance-heading">
               <h2 id="balance-heading" className="sr-only">Account Balance</h2>
-              <Card className="modern-card bg-card border border-border/30" role="region" aria-label="Current balance information">
-                <CardContent className="p-8 text-center">
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Balance</p>
-                      <div className="text-5xl font-bold text-foreground tracking-tight leading-none" aria-label={`Current balance: ${balance} dollars`}>
-                        {isLoadingWallets ? (
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                            <span className="text-sm text-muted-foreground">Loading...</span>
-                          </div>
-                        ) : (
-                          `$${balance}`
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center gap-2" role="status" aria-label="Network status">
-                      <div className="w-1.5 h-1.5 bg-success rounded-full pulse-glow" aria-hidden="true" />
-                      <span className="text-xs font-medium text-muted-foreground">
-                        USDT • {primaryWallet ? `Chain ${primaryWallet.chainId}` : 'PLASMA Network'}
-                        {primaryWallet && (
-                          <span className="ml-2 text-success">✓ Connected</span>
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <WalletCard 
+                balance={balance}
+                address={walletAddress}
+                network={primaryWallet ? `Chain ${primaryWallet.chainId}` : 'PLASMA Network'}
+                isLoading={isLoadingWallets}
+                className="animate-slide-up"
+              />
             </section>
 
             <section aria-labelledby="primary-actions-heading">
