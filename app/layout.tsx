@@ -13,16 +13,16 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Fenix - Secure Crypto Wallet",
-  description: "Send, receive, and manage your USDT with bank-grade security powered by Privy.",
-  keywords: "crypto wallet, USDT, blockchain, Web3, DeFi, secure wallet",
+  title: "Fenix - Neo Bank for Lebanon | Invest in Stocks & Crypto",
+  description: "The perfect neo bank for Lebanon with integrated stock and crypto trading. Send money, manage cards, save for goals, and invest - all in one secure app.",
+  keywords: "Lebanon bank, neo bank, crypto wallet, stock trading, USDT, Lebanese pound, LBP, investment app, digital banking Lebanon",
   authors: [{ name: "Fenix Team" }],
   manifest: "/site.webmanifest",
   metadataBase: new URL("https://fenix-wallet.vercel.app"),
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "Fenix Wallet"
+    statusBarStyle: "black-translucent",
+    title: "Fenix Bank Lebanon"
   },
   openGraph: {
     title: "Fenix Wallet - Secure Crypto Wallet",

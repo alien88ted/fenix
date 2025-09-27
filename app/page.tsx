@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { usePrivy, useLogin, useLogout, useWallets } from "@privy-io/react-auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,6 +18,7 @@ import { FenixLogo } from "@/components/fenix-logo"
 import { Confetti } from "@/components/ui/confetti"
 
 export default function FenixWallet() {
+  const router = useRouter()
   const { ready, authenticated, user } = usePrivy()
   const { login } = useLogin({
     onComplete: ({ user, isNewUser }) => {
@@ -231,7 +233,41 @@ export default function FenixWallet() {
 
   const secondaryActions = [
     {
-      title: "More Services",
+      title: "Invest",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      ),
+      description: "Stocks & Crypto trading",
+      action: () => router.push("/invest"),
+      badge: "New",
+      highlight: true
+    },
+    {
+      title: "Cards",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+        </svg>
+      ),
+      description: "Virtual & Physical cards",
+      action: () => router.push("/cards"),
+      badge: "2 active"
+    },
+    {
+      title: "Savings",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+        </svg>
+      ),
+      description: "Goals & Savings plans",
+      action: () => router.push("/savings"),
+      badge: "4 goals"
+    },
+    {
+      title: "Services",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 17.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -399,34 +435,100 @@ export default function FenixWallet() {
 
             <section aria-labelledby="secondary-actions-heading" className="fade-in" style={{animationDelay: '0.2s'}}>
               <h2 id="secondary-actions-heading" className="sr-only">More Services</h2>
-              <div className="space-y-3 stagger-animation">
+              <div className="grid grid-cols-2 gap-3">
                 {secondaryActions.map((action, index) => (
                   <Button
                     key={index}
                     onClick={action.action}
-                    className="w-full h-14 justify-between modern-button bg-card hover:bg-secondary/50 border border-border/30 text-card-foreground hover:text-foreground focus-modern p-4"
+                    className={`h-24 flex-col gap-2 modern-button ${
+                      action.highlight 
+                        ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border-primary/30" 
+                        : "bg-card hover:bg-secondary/50 border-border/30"
+                    } text-card-foreground hover:text-foreground focus-modern p-4 relative overflow-hidden group`}
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
                   >
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="text-primary flex-shrink-0">{action.icon}</div>
-                      <div className="text-left flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate">{action.title}</div>
+                    {action.highlight && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    )}
+                    <div className="relative z-10 flex flex-col items-center gap-2 w-full">
+                      <div className={`${action.highlight ? "text-primary" : "text-primary"} scale-90 sm:scale-100`}>
+                        {action.icon}
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
+                      <div className="text-center">
+                        <div className="font-semibold text-xs sm:text-sm">{action.title}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5 hidden sm:block">{action.description}</div>
+                      </div>
                       {action.badge && (
-                        <span className="px-2 py-0.5 bg-muted text-muted-foreground text-xs font-medium rounded-md">
+                        <span className={`absolute top-2 right-2 px-1.5 py-0.5 ${
+                          action.highlight 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-muted text-muted-foreground"
+                        } text-xs font-medium rounded-md`}>
                           {action.badge}
                         </span>
                       )}
-                      <svg className="w-4 h-4 text-muted-foreground/60 icon-modern" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
                     </div>
                   </Button>
                 ))}
+              </div>
+            </section>
+
+            {/* Quick Stats */}
+            <section className="fade-in" style={{animationDelay: '0.3s'}}>
+              <div className="grid grid-cols-3 gap-3">
+                <Card 
+                  onClick={() => router.push("/invest")}
+                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-4 text-center">
+                    <p className="text-2xl font-bold text-primary">+12.5%</p>
+                    <p className="text-xs text-muted-foreground mt-1">Portfolio Today</p>
+                  </CardContent>
+                </Card>
+                <Card 
+                  onClick={() => router.push("/savings")}
+                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-4 text-center">
+                    <p className="text-2xl font-bold">$1,234</p>
+                    <p className="text-xs text-muted-foreground mt-1">Saved This Month</p>
+                  </CardContent>
+                </Card>
+                <Card 
+                  onClick={() => router.push("/cards")}
+                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-4 text-center">
+                    <p className="text-2xl font-bold text-success">2</p>
+                    <p className="text-xs text-muted-foreground mt-1">Active Cards</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            {/* Quick Access Menu */}
+            <section className="fade-in" style={{animationDelay: '0.4s'}}>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => router.push("/insights")}
+                  className="h-12 modern-button bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 border border-primary/20 text-foreground"
+                  variant="outline"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Analytics
+                </Button>
+                <Button
+                  onClick={() => router.push("/lebanon")}
+                  className="h-12 modern-button bg-gradient-to-r from-green-600/20 to-red-600/20 hover:from-green-600/30 hover:to-red-600/30 border border-green-600/30 text-foreground"
+                  variant="outline"
+                >
+                  <span className="text-lg mr-2">🇱🇧</span>
+                  Lebanon Market
+                </Button>
               </div>
             </section>
 
