@@ -66,9 +66,10 @@ export function WalletCard({
       "bg-gradient-to-br from-card via-card/98 to-primary/[0.02]",
       "dark:from-card dark:via-card/95 dark:to-primary/[0.05]",
       "border border-border/40 dark:border-border/30",
-      "transition-all duration-500",
+      "transition-all duration-500 ease-out",
       "hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10",
       "hover:scale-[1.02] hover:-translate-y-1",
+      "transform-gpu will-change-transform",
       "before:absolute before:inset-0 before:rounded-2xl",
       "before:bg-gradient-to-br before:from-primary/5 before:via-transparent before:to-accent/5",
       "before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500",
@@ -84,7 +85,7 @@ export function WalletCard({
         
         <div className="space-y-4 relative z-10">
           <div className="space-y-1.5 sm:space-y-2">
-            <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-[0.15em] opacity-70">
+            <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-[0.15em] opacity-70 animate-slideInUp">
               Total Balance
             </p>
             <div className={cn(
@@ -92,7 +93,7 @@ export function WalletCard({
               "transition-all duration-500 transform-gpu",
               isAnimating && "scale-105 sm:scale-110"
             )}>
-              <div className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-none">
+              <div className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-none animate-slideInUp animation-delay-200">
                 <span className="bg-gradient-to-br from-foreground via-foreground/90 to-foreground/80 dark:from-foreground dark:via-foreground/95 dark:to-foreground/85 bg-clip-text text-transparent">
                   ${balance}
                 </span>
@@ -101,7 +102,7 @@ export function WalletCard({
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-lg sm:blur-xl animate-pulse" />
               )}
             </div>
-            <p className="text-[11px] sm:text-xs text-muted-foreground/60 font-medium">
+            <p className="text-[11px] sm:text-xs text-muted-foreground/60 font-medium animate-slideInUp animation-delay-400">
               ≈ {balance} USDT
             </p>
           </div>
