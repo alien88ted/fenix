@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
-  const { theme, setTheme, systemTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -33,12 +33,15 @@ export function ThemeToggle() {
       document.body.appendChild(ripple);
       
       setTimeout(() => {
-        ripple.remove();
+        if (ripple && ripple.parentNode) {
+          ripple.remove();
+        }
       }, 1000);
     }
     
-    // Toggle theme
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    // Toggle theme - use resolvedTheme for accurate current theme
+    const currentTheme = resolvedTheme || theme;
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     
     setTimeout(() => {
       setIsAnimating(false);
@@ -48,17 +51,16 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <button
-        className="relative w-[72px] h-[36px] rounded-full bg-gradient-to-r from-muted to-muted/80 border border-border/40 transition-all duration-300 opacity-50"
+        className="relative w-14 h-7 sm:w-[72px] sm:h-[36px] rounded-full bg-gradient-to-r from-muted to-muted/80 border border-border/40 transition-all duration-300 opacity-50"
         aria-label="Toggle theme"
         disabled
       >
-        <span className="absolute left-[6px] top-[6px] h-[24px] w-[24px] rounded-full bg-gradient-to-br from-background to-background/90 shadow-sm" />
+        <span className="absolute left-1 top-1 sm:left-[6px] sm:top-[6px] h-5 w-5 sm:h-[24px] sm:w-[24px] rounded-full bg-gradient-to-br from-background to-background/90 shadow-sm" />
       </button>
     );
   }
 
-  const currentTheme = theme === 'system' ? systemTheme : theme;
-  const isDark = currentTheme === 'dark';
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <>
@@ -120,21 +122,22 @@ export function ThemeToggle() {
         id="theme-toggle-button"
         onClick={handleThemeToggle}
         className={`
-          relative w-[72px] h-[36px] rounded-full transition-all duration-500 ease-in-out
+          relative w-14 h-7 sm:w-[72px] sm:h-[36px] rounded-full transition-all duration-500 ease-in-out
           ${isDark 
-            ? 'bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700/50 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]' 
-            : 'bg-gradient-to-r from-sky-400 to-blue-500 border-sky-300/50 shadow-[inset_0_2px_8px_rgba(255,255,255,0.3)]'
+            ? 'bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700/50 shadow-[inset_0_1px_4px_rgba(0,0,0,0.3)] sm:shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]' 
+            : 'bg-gradient-to-r from-sky-400 to-blue-500 border-sky-300/50 shadow-[inset_0_1px_4px_rgba(255,255,255,0.3)] sm:shadow-[inset_0_2px_8px_rgba(255,255,255,0.3)]'
           }
-          border hover:scale-105 active:scale-95
-          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background
+          border hover:scale-105 active:scale-95 touch-manipulation
+          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 sm:focus:ring-offset-2 focus:ring-offset-background
           ${isAnimating ? 'scale-95' : ''}
         `}
         aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
         aria-pressed={isDark}
         role="switch"
+        type="button"
       >
-        {/* Background decorations */}
-        <div className="absolute inset-0 rounded-full overflow-hidden">
+        {/* Background decorations - hide on mobile for performance */}
+        <div className="absolute inset-0 rounded-full overflow-hidden hidden sm:block">
           {isDark ? (
             <>
               {/* Stars for dark mode */}
@@ -155,11 +158,11 @@ export function ThemeToggle() {
         {/* Toggle knob */}
         <span 
           className={`
-            absolute top-[4px] h-[28px] w-[28px] rounded-full 
+            absolute top-1 sm:top-[4px] h-5 w-5 sm:h-[28px] sm:w-[28px] rounded-full 
             transition-all duration-500 ease-in-out transform
             ${isDark 
-              ? 'translate-x-[38px] bg-gradient-to-br from-gray-200 to-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_-1px_2px_rgba(0,0,0,0.1)]' 
-              : 'translate-x-[4px] bg-gradient-to-br from-yellow-100 to-orange-200 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_-1px_2px_rgba(0,0,0,0.1)]'
+              ? 'translate-x-[30px] sm:translate-x-[38px] bg-gradient-to-br from-gray-200 to-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.3)] sm:shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_-1px_2px_rgba(0,0,0,0.1)]' 
+              : 'translate-x-[2px] sm:translate-x-[4px] bg-gradient-to-br from-yellow-100 to-orange-200 shadow-[0_1px_3px_rgba(0,0,0,0.2)] sm:shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_-1px_2px_rgba(0,0,0,0.1)]'
             }
             flex items-center justify-center
             ${isAnimating ? 'scale-110' : ''}
@@ -169,7 +172,7 @@ export function ThemeToggle() {
           <div className={`absolute transition-all duration-500 ${isDark ? 'rotate-0' : 'rotate-180'}`}>
             {/* Sun icon */}
             <div className={`absolute transition-all duration-500 ${isDark ? 'opacity-0 scale-50 rotate-180' : 'opacity-100 scale-100 rotate-0'}`}>
-              <svg className="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="5"/>
                 <line x1="12" y1="1" x2="12" y2="3"/>
                 <line x1="12" y1="21" x2="12" y2="23"/>
@@ -180,8 +183,8 @@ export function ThemeToggle() {
                 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
                 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
               </svg>
-              {/* Sun rays animation */}
-              <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
+              {/* Sun rays animation - hide on mobile */}
+              <div className="absolute inset-0 animate-spin hidden sm:block" style={{ animationDuration: '20s' }}>
                 <div className="absolute top-[-2px] left-1/2 transform -translate-x-1/2 w-0.5 h-1 bg-orange-400 rounded-full" />
                 <div className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-0.5 h-1 bg-orange-400 rounded-full" />
                 <div className="absolute left-[-2px] top-1/2 transform -translate-y-1/2 w-1 h-0.5 bg-orange-400 rounded-full" />
@@ -191,20 +194,20 @@ export function ThemeToggle() {
             
             {/* Moon icon */}
             <div className={`absolute transition-all duration-500 ${isDark ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-180'}`}>
-              <svg className="h-5 w-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24" style={{ filter: isDark ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none' }}>
+              <svg className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24" style={{ filter: isDark ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none' }}>
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
-              {/* Moon crater details */}
-              <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-slate-400/30 rounded-full" />
-              <div className="absolute bottom-2 right-2 w-1 h-1 bg-slate-400/20 rounded-full" />
+              {/* Moon crater details - hide on mobile */}
+              <div className="absolute top-1 right-1 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-slate-400/30 rounded-full hidden sm:block" />
+              <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-0.5 sm:w-1 h-0.5 sm:h-1 bg-slate-400/20 rounded-full hidden sm:block" />
             </div>
           </div>
         </span>
         
-        {/* Ambient glow effect */}
+        {/* Ambient glow effect - subtle on mobile */}
         <div 
           className={`
-            absolute inset-0 rounded-full transition-opacity duration-500
+            absolute inset-0 rounded-full transition-opacity duration-500 hidden sm:block
             ${isDark 
               ? 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-100' 
               : 'bg-gradient-to-r from-yellow-400/10 to-orange-400/10 opacity-100'
