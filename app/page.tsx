@@ -14,6 +14,7 @@ import { LoadingScreen } from "@/components/loading-screen"
 import { Toaster } from "@/components/ui/sonner"
 import { handleSuccess, handleError } from "@/lib/utils/error-handler"
 import { FenixLogo } from "@/components/fenix-logo"
+import { Confetti } from "@/components/ui/confetti"
 
 export default function FenixWallet() {
   const { ready, authenticated, user } = usePrivy()
@@ -48,6 +49,7 @@ export default function FenixWallet() {
   const [errors, setErrors] = useState({})
   const [copied, setCopied] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
   
   // Get primary wallet data
   const primaryWallet = getPrimaryWallet()
@@ -138,7 +140,12 @@ export default function FenixWallet() {
         setIsTransitioning(true)
         setTimeout(() => {
           setSendStep(4)
+          setShowConfetti(true)
           setIsTransitioning(false)
+          // Haptic feedback for success
+          if ('vibrate' in navigator) {
+            navigator.vibrate([100, 50, 100]);
+          }
         }, 100)
 
         // Refresh balance after transaction
@@ -248,21 +255,23 @@ export default function FenixWallet() {
   // Loading state
   if (!ready || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex items-center justify-center">
+        <div className="text-center space-y-6 fade-in">
           <div className="relative">
+            <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse" />
             <Image
               src="/fenix-logo.png"
               alt="Fenix"
-              width={40}
-              height={40}
-              className="w-10 h-10 float mx-auto"
+              width={48}
+              height={48}
+              className="w-12 h-12 float mx-auto relative z-10 logo-glow"
               priority
             />
           </div>
-          <div className="w-24 h-0.5 bg-muted rounded-full overflow-hidden mx-auto">
-            <div className="h-full bg-primary rounded-full loading-shimmer"></div>
+          <div className="w-32 h-1 bg-muted/30 rounded-full overflow-hidden mx-auto">
+            <div className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary rounded-full loading-shimmer"></div>
           </div>
+          <p className="text-xs text-muted-foreground animate-pulse">Securing your wallet...</p>
         </div>
       </div>
     )
@@ -274,26 +283,43 @@ export default function FenixWallet() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <Card className="w-full max-w-md modern-card bg-card border border-border/30">
           <CardContent className="p-8 space-y-6">
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-6">
               <div className="relative mx-auto w-fit">
-                <FenixLogo size={64} className="logo-glow" animate />
+                <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse" />
+                <FenixLogo size={72} className="logo-glow relative z-10" animate />
               </div>
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">Welcome to Fenix</h1>
-                <p className="text-muted-foreground">Your secure gateway to Web3 payments</p>
+              <div className="space-y-3 fade-in">
+                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Welcome to Fenix
+                </h1>
+                <p className="text-muted-foreground text-lg">Your secure gateway to Web3 payments</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <Button
                 onClick={login}
-                className="w-full modern-button bg-primary hover:bg-primary/90 text-primary-foreground h-12"
+                className="w-full modern-button bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 Connect Wallet
               </Button>
 
-              <div className="text-center text-sm text-muted-foreground">
-                <p>✓ Non-custodial • ✓ Bank-grade security • ✓ No seed phrases</p>
+              <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Non-custodial</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Bank-grade security</span>
+                </div>
               </div>
             </div>
 
@@ -312,8 +338,8 @@ export default function FenixWallet() {
   // Authenticated - show wallet
   return (
     <div className="min-h-screen bg-background">
-      <header className="glass border-b border-border/20 relative z-50" role="banner">
-        <div className="flex items-center justify-between px-6 py-5 max-w-sm mx-auto">
+      <header className="glass border-b border-border/20 relative z-50 backdrop-blur-xl" role="banner">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 max-w-sm mx-auto lg:max-w-2xl">
           <div className="flex items-center gap-3">
             {currentView !== "home" && renderBackButton()}
             <img
@@ -345,44 +371,44 @@ export default function FenixWallet() {
         </div>
       </header>
 
-      <main className={`max-w-sm mx-auto px-6 py-8 transition-all duration-150 ${isTransitioning ? 'opacity-70 scale-[0.98]' : 'opacity-100 scale-100'}`} role="main">
+      <main className={`max-w-sm mx-auto lg:max-w-2xl px-4 sm:px-6 py-6 sm:py-8 transition-all duration-150 ${isTransitioning ? 'opacity-70 scale-[0.98]' : 'opacity-100 scale-100'}`} role="main">
         {currentView === "home" && (
           <div className="space-y-8">
-            <section aria-labelledby="balance-heading">
+            <section aria-labelledby="balance-heading" className="fade-in">
               <h2 id="balance-heading" className="sr-only">Account Balance</h2>
               <WalletCard 
                 balance={balance}
                 address={walletAddress}
                 network="Secure Network"
                 isLoading={isLoadingWallets}
-                className="animate-slide-up"
+                className="animate-slide-up card-hover"
               />
             </section>
 
-            <section aria-labelledby="primary-actions-heading">
+            <section aria-labelledby="primary-actions-heading" className="fade-in" style={{animationDelay: '0.1s'}}>
               <h2 id="primary-actions-heading" className="sr-only">Primary Actions</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 stagger-animation">
                 {mainActions.map((action, index) => (
                   <Button
                     key={index}
                     onClick={action.action}
-                    className="h-24 flex-col gap-2 modern-button bg-card hover:bg-secondary/50 border border-border/30 text-card-foreground hover:text-foreground focus-modern"
+                    className="h-20 sm:h-24 flex-col gap-2 modern-button bg-card hover:bg-secondary/50 active:bg-secondary/60 border border-border/30 text-card-foreground hover:text-foreground focus-modern touch-manipulation"
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
                   >
-                    <div className="text-primary">{action.icon}</div>
+                    <div className="text-primary scale-90 sm:scale-100">{action.icon}</div>
                     <div className="text-center">
-                      <div className="font-semibold text-sm">{action.title}</div>
+                      <div className="font-semibold text-xs sm:text-sm">{action.title}</div>
                     </div>
                   </Button>
                 ))}
               </div>
             </section>
 
-            <section aria-labelledby="secondary-actions-heading">
+            <section aria-labelledby="secondary-actions-heading" className="fade-in" style={{animationDelay: '0.2s'}}>
               <h2 id="secondary-actions-heading" className="sr-only">More Services</h2>
-              <div className="space-y-3">
+              <div className="space-y-3 stagger-animation">
                 {secondaryActions.map((action, index) => (
                   <Button
                     key={index}
@@ -429,15 +455,32 @@ export default function FenixWallet() {
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-foreground">To Address</label>
-                      <input
-                        type="text"
-                        placeholder="0x... or enter wallet address"
-                        value={sendData.address}
-                        onChange={(e) => setSendData({...sendData, address: e.target.value})}
-                        className={`w-full p-3 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary modern-button ${errors.address ? 'border-destructive' : 'border-border/30'}`}
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="0x... or enter wallet address"
+                          value={sendData.address}
+                          onChange={(e) => {
+                            setSendData({...sendData, address: e.target.value});
+                            if (errors.address) setErrors({...errors, address: ''});
+                          }}
+                          className={`w-full p-3 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.address ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'}`}
+                          aria-invalid={!!errors.address}
+                          aria-describedby={errors.address ? 'address-error' : undefined}
+                        />
+                        {sendData.address && !errors.address && (
+                          <svg className="absolute right-3 top-3.5 w-5 h-5 text-success animate-fade-in" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
                       {errors.address && (
-                        <p className="text-xs text-destructive">{errors.address}</p>
+                        <p id="address-error" className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {errors.address}
+                        </p>
                       )}
                       <Button
                         onClick={() => setSendData({...sendData, address: walletAddress})}
@@ -455,32 +498,47 @@ export default function FenixWallet() {
                           type="number"
                           placeholder="0.00"
                           value={sendData.amount}
-                          onChange={(e) => setSendData({...sendData, amount: e.target.value})}
-                          className={`w-full p-3 pr-16 border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary modern-button ${errors.amount ? 'border-destructive' : 'border-border/30'}`}
+                          onChange={(e) => {
+                            setSendData({...sendData, amount: e.target.value});
+                            if (errors.amount) setErrors({...errors, amount: ''});
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          className={`w-full p-3 pr-16 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.amount ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'}`}
+                          aria-invalid={!!errors.amount}
+                          aria-describedby={errors.amount ? 'amount-error' : undefined}
+                          min="0"
+                          step="0.01"
                         />
                         <span className="absolute right-3 top-3 text-sm text-muted-foreground">USDT</span>
                       </div>
                       {errors.amount && (
-                        <p className="text-xs text-destructive">{errors.amount}</p>
+                        <p id="amount-error" className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {errors.amount}
+                        </p>
                       )}
                       <div className="flex gap-2">
+                        {['10', '50', '100'].map(amount => (
+                          <Button
+                            key={amount}
+                            onClick={() => {
+                              setSendData({...sendData, amount});
+                              if (errors.amount) setErrors({...errors, amount: ''});
+                            }}
+                            className="flex-1 text-xs px-2 py-1 h-8 bg-secondary/30 hover:bg-secondary/60 hover:scale-105 text-foreground transition-all duration-200"
+                            variant="outline"
+                          >
+                            ${amount}
+                          </Button>
+                        ))}
                         <Button
-                          onClick={() => setSendData({...sendData, amount: "10"})}
-                          className="text-xs px-2 py-1 h-auto bg-secondary/50 hover:bg-secondary text-foreground"
-                          variant="outline"
-                        >
-                          $10
-                        </Button>
-                        <Button
-                          onClick={() => setSendData({...sendData, amount: "100"})}
-                          className="text-xs px-2 py-1 h-auto bg-secondary/50 hover:bg-secondary text-foreground"
-                          variant="outline"
-                        >
-                          $100
-                        </Button>
-                        <Button
-                          onClick={() => setSendData({...sendData, amount: balance.replace(',', '')})}
-                          className="text-xs px-2 py-1 h-auto bg-secondary/50 hover:bg-secondary text-foreground"
+                          onClick={() => {
+                            setSendData({...sendData, amount: balance.replace(',', '')});
+                            if (errors.amount) setErrors({...errors, amount: ''});
+                          }}
+                          className="flex-1 text-xs px-2 py-1 h-8 bg-primary/10 hover:bg-primary/20 hover:scale-105 text-primary border-primary/30 transition-all duration-200"
                           variant="outline"
                         >
                           Max
@@ -596,25 +654,38 @@ export default function FenixWallet() {
             )}
 
             {sendStep === 4 && (
-              <Card className="modern-card bg-card border border-border/30">
-                <CardContent className="p-8 text-center">
-                  <div className="space-y-6">
-                    <div className="w-16 h-16 mx-auto bg-success/10 rounded-full flex items-center justify-center">
-                      <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-success">Transaction Sent!</h3>
-                      <p className="text-sm text-muted-foreground">${sendData.amount} USDT sent successfully</p>
-                      <div className="p-3 bg-success/5 rounded-lg border border-success/20">
-                        <p className="text-xs font-mono text-success">TX: 0xabc123...def789</p>
+              <>
+                <Confetti active={true} duration={3000} particleCount={100} />
+                <Card className="modern-card bg-gradient-to-br from-card via-success/5 to-card border border-success/30 animate-fade-in">
+                  <CardContent className="p-8 text-center">
+                    <div className="space-y-6">
+                      <div className="w-20 h-20 mx-auto bg-gradient-to-br from-success/20 to-success/10 rounded-full flex items-center justify-center success-animation">
+                        <svg className="w-10 h-10 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-bold bg-gradient-to-r from-success to-success/70 bg-clip-text text-transparent">Success!</h3>
+                        <p className="text-base text-foreground font-medium">${sendData.amount} USDT sent</p>
+                        <div className="p-3 bg-success/10 rounded-lg border border-success/30 backdrop-blur-sm">
+                          <p className="text-xs font-mono text-success flex items-center justify-center gap-2">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            TX: 0xabc123...def789
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-8 h-1 bg-success/20 rounded-full overflow-hidden">
+                          <div className="h-full bg-success rounded-full animate-pulse" />
+                        </div>
+                        <p className="text-xs text-muted-foreground">Returning to home...</p>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">Returning to home...</p>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </>
             )}
           </div>
         )}
