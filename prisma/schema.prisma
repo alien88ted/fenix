@@ -7,9 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider     = "sqlite"
-  url          = "file:./dev.db"
-  relationMode = "prisma" // For foreign key emulation
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma" // For PlanetScale compatibility
 }
 
 // Core User model - integrates with Privy authentication
