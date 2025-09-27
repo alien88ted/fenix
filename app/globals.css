@@ -30,12 +30,14 @@
   --info: oklch(0.65 0.18 250); /* Cool blue */
   --radius: 0.875rem;
   /* Premium glass morphism */
-  --glass: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.88);
   --shadow-soft: 0 2px 8px -2px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.04);
   --shadow-medium: 0 8px 24px -8px rgba(0, 0, 0, 0.12), 0 16px 32px -12px rgba(0, 0, 0, 0.06);
   --shadow-large: 0 16px 48px -16px rgba(0, 0, 0, 0.16), 0 24px 64px -24px rgba(0, 0, 0, 0.08);
   --shadow-glow: 0 0 24px rgba(234, 88, 12, 0.08);
+  --shadow-elevated: 0 20px 60px -12px rgba(0, 0, 0, 0.18);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .dark {
@@ -64,12 +66,14 @@
   --warning: oklch(0.78 0.22 85); /* Glowing amber */
   --info: oklch(0.68 0.20 250); /* Electric blue */
   /* Premium dark glass with depth */
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
   --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.4);
   --shadow-large: 0 16px 48px rgba(0, 0, 0, 0.6), 0 32px 80px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 48px rgba(234, 88, 12, 0.15);
+  --shadow-elevated: 0 25px 70px -15px rgba(0, 0, 0, 0.7);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
@@ -137,14 +141,16 @@
 
   /* Premium glass morphism system */
   .glass {
-    backdrop-filter: blur(20px) saturate(200%) contrast(1.1);
-    -webkit-backdrop-filter: blur(20px) saturate(200%) contrast(1.1);
+    backdrop-filter: blur(24px) saturate(200%) contrast(1.05);
+    -webkit-backdrop-filter: blur(24px) saturate(200%) contrast(1.05);
     background: var(--glass);
     border: 1px solid var(--glass-border);
     position: relative;
     box-shadow: 
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
       0 20px 40px -20px rgba(0, 0, 0, 0.15);
+    transform: translateZ(0);
+    will-change: backdrop-filter;
   }
   
   .glass::before {
@@ -186,6 +192,15 @@
     transform-style: preserve-3d;
     backface-visibility: hidden;
     isolation: isolate;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .modern-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
   }
 
   .modern-button::before {
@@ -283,6 +298,54 @@
     }
   }
 
+  /* Smooth entrance animation */
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Elegant scale animation */
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Smooth rotation animation */
+  @keyframes rotateIn {
+    from {
+      opacity: 0;
+      transform: rotate(-10deg) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+  }
+
+  .animate-slideInUp {
+    animation: slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .animate-rotateIn {
+    animation: rotateIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
   .float {
     animation: float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
@@ -350,6 +413,16 @@
     background: oklch(var(--card));
     border: 1px solid oklch(var(--border) / 0.5);
     overflow: hidden;
+    transform: translateZ(0);
+  }
+
+  .modern-card-interactive {
+    cursor: pointer;
+  }
+
+  .modern-card-interactive:active {
+    transform: scale(0.98);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .modern-card::before {
@@ -398,7 +471,7 @@
     text-wrap: pretty;
   }
 
-  /* Added premium gradient overlays */
+  /* Premium gradient system */
   .gradient-overlay {
     background: linear-gradient(
       135deg,
@@ -408,6 +481,107 @@
       rgba(234, 88, 12, 0.03) 75%,
       rgba(251, 146, 60, 0.08) 100%
     );
+  }
+
+  .gradient-radial {
+    background: radial-gradient(
+      circle at center,
+      oklch(var(--primary) / 0.15),
+      oklch(var(--primary) / 0.05) 40%,
+      transparent 70%
+    );
+  }
+
+  .gradient-conic {
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      oklch(var(--primary) / 0.1) 0deg,
+      oklch(var(--accent) / 0.1) 90deg,
+      oklch(var(--primary) / 0.1) 180deg,
+      oklch(var(--accent) / 0.1) 270deg,
+      oklch(var(--primary) / 0.1) 360deg
+    );
+  }
+
+  .gradient-mesh {
+    background-image: 
+      radial-gradient(at 40% 20%, oklch(var(--primary) / 0.2) 0px, transparent 50%),
+      radial-gradient(at 80% 80%, oklch(var(--accent) / 0.15) 0px, transparent 50%),
+      radial-gradient(at 20% 70%, oklch(var(--primary) / 0.1) 0px, transparent 50%);
+  }
+
+  .gradient-aurora {
+    background: linear-gradient(
+      45deg,
+      oklch(var(--primary) / 0.3),
+      oklch(var(--accent) / 0.2),
+      oklch(var(--primary) / 0.1),
+      transparent
+    );
+    filter: blur(40px);
+  }
+
+  .gradient-glow {
+    background: radial-gradient(
+      circle at center,
+      oklch(var(--primary) / 0.4),
+      oklch(var(--primary) / 0.2) 40%,
+      transparent 70%
+    );
+    filter: blur(60px);
+  }
+
+  /* Premium text gradients */
+  .text-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--primary)),
+      oklch(var(--primary) / 0.7)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-shine {
+    background: linear-gradient(
+      90deg,
+      oklch(var(--foreground)),
+      oklch(var(--foreground) / 0.7),
+      oklch(var(--foreground)),
+      oklch(var(--foreground) / 0.7),
+      oklch(var(--foreground))
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: text-shine 3s linear infinite;
+  }
+
+  @keyframes text-shine {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Glassmorphism variations */
+  .glass-light {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-colored {
+    background: oklch(var(--primary) / 0.1);
+    backdrop-filter: blur(10px) saturate(200%);
+    border: 1px solid oklch(var(--primary) / 0.2);
   }
 
   /* Sophisticated scroll enhancements */
@@ -701,14 +875,49 @@
   @media (max-width: 640px) {
     .modern-button {
       min-height: 44px; /* iOS touch target minimum */
+      padding: 0.75rem 1rem;
     }
 
     input, textarea, select {
       font-size: 16px; /* Prevents zoom on iOS */
+      padding: 0.875rem;
+      border-radius: 0.75rem;
     }
 
     .modern-card {
       border-radius: 0.875rem;
+    }
+
+    /* Better mobile tap targets */
+    button, a, [role="button"] {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* Improved mobile spacing */
+    .mobile-safe-area {
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* Smooth scrolling on mobile */
+    .mobile-scroll {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }
+
+    /* Prevent text selection on interactive elements */
+    .modern-button, .modern-card-interactive {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /* Better mobile animations */
+    .modern-button:active {
+      transform: scale(0.96);
+    }
+
+    .modern-card-interactive:active {
+      transform: scale(0.98);
     }
   }
 
@@ -736,6 +945,11 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .float, .float-smooth, .pulse-glow {
+      animation: none !important;
     }
   }
 
@@ -743,10 +957,95 @@
   @media (prefers-contrast: high) {
     .modern-button {
       border-width: 2px;
+      border-color: currentColor;
     }
 
     .modern-card {
       border-width: 2px;
+      border-color: currentColor;
+    }
+
+    .glass {
+      backdrop-filter: none;
+      background: var(--card);
+      border-width: 2px;
+    }
+  }
+
+  /* Focus visible improvements */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Skip to content link */
+  .skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+    border-radius: 0 0 8px 0;
+  }
+
+  .skip-to-content:focus {
+    top: 0;
+  }
+
+  /* Screen reader only text */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Keyboard navigation indicators */
+  .keyboard-focus:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+  }
+
+  /* ARIA live region styling */
+  [aria-live="polite"],
+  [aria-live="assertive"] {
+    position: relative;
+  }
+
+  /* Improved form accessibility */
+  label {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
+
+  input:invalid,
+  textarea:invalid,
+  select:invalid {
+    border-color: var(--destructive);
+  }
+
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  select[aria-invalid="true"] {
+    border-color: var(--destructive);
+    background-color: oklch(var(--destructive) / 0.05);
+  }
+
+  /* Better touch targets */
+  @media (pointer: coarse) {
+    button, a, [role="button"], input, select, textarea {
+      min-height: 44px;
+      min-width: 44px;
     }
   }
 }

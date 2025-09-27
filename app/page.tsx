@@ -58,7 +58,7 @@ export default function FenixWallet() {
   const balance = getTotalBalance('USDT')
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 200)
+    setTimeout(() => setIsLoading(false), 300)
   }, [])
 
   // Auto-return to home after service completion
@@ -284,7 +284,7 @@ export default function FenixWallet() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex items-center justify-center">
         <div className="text-center space-y-6 fade-in">
-          <div className="relative">
+          <div className="relative animate-scaleIn">
             <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse" />
             <Image
               src="/fenix-logo.png"
@@ -295,10 +295,10 @@ export default function FenixWallet() {
               priority
             />
           </div>
-          <div className="w-32 h-1 bg-muted/30 rounded-full overflow-hidden mx-auto">
+          <div className="w-32 h-1 bg-muted/30 rounded-full overflow-hidden mx-auto animate-slideInUp animation-delay-200">
             <div className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary rounded-full loading-shimmer"></div>
           </div>
-          <p className="text-xs text-muted-foreground animate-pulse">Securing your wallet...</p>
+          <p className="text-xs text-muted-foreground animate-pulse animate-slideInUp animation-delay-400">Securing your wallet...</p>
         </div>
       </div>
     )
@@ -419,12 +419,13 @@ export default function FenixWallet() {
                   <Button
                     key={index}
                     onClick={action.action}
-                    className="h-[72px] sm:h-24 flex-col gap-1.5 sm:gap-2 modern-button bg-card hover:bg-secondary/50 active:bg-secondary/60 border border-border/30 text-card-foreground hover:text-foreground focus-modern touch-manipulation p-2 sm:p-4"
+                    className="h-[72px] sm:h-24 flex-col gap-1.5 sm:gap-2 modern-button bg-card hover:bg-secondary/50 active:bg-secondary/60 border border-border/30 text-card-foreground hover:text-foreground focus-modern touch-manipulation p-2 sm:p-4 group"
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
+                    style={{animationDelay: `${index * 50}ms`}}
                   >
-                    <div className="text-primary scale-75 sm:scale-100">{action.icon}</div>
+                    <div className="text-primary scale-75 sm:scale-100 transition-transform duration-200 group-hover:scale-90 sm:group-hover:scale-110 group-active:scale-75 sm:group-active:scale-95">{action.icon}</div>
                     <div className="text-center">
                       <div className="font-semibold text-[11px] sm:text-sm">{action.title}</div>
                     </div>
@@ -444,16 +445,17 @@ export default function FenixWallet() {
                       action.highlight 
                         ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border-primary/30" 
                         : "bg-card hover:bg-secondary/50 border-border/30"
-                    } text-card-foreground hover:text-foreground focus-modern p-3 sm:p-4 relative overflow-hidden group touch-manipulation`}
+                    } text-card-foreground hover:text-foreground focus-modern p-3 sm:p-4 relative overflow-hidden group touch-manipulation animate-slideInUp`}
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
+                    style={{animationDelay: `${(index + 2) * 60}ms`}}
                   >
                     {action.highlight && (
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     )}
                     <div className="relative z-10 flex flex-col items-center gap-2 w-full">
-                      <div className={`${action.highlight ? "text-primary" : "text-primary"} scale-90 sm:scale-100`}>
+                      <div className={`${action.highlight ? "text-primary" : "text-primary"} scale-90 sm:scale-100 transition-transform duration-200 group-hover:scale-100 sm:group-hover:scale-110 group-active:scale-85`}>
                         {action.icon}
                       </div>
                       <div className="text-center">
@@ -480,28 +482,28 @@ export default function FenixWallet() {
               <div className="grid grid-cols-3 gap-3">
                 <Card 
                   onClick={() => router.push("/invest")}
-                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="modern-card modern-card-interactive hover:scale-105 transition-all duration-300 cursor-pointer group"
                 >
                   <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-primary">+12.5%</p>
+                    <p className="text-2xl font-bold text-primary transition-transform duration-200 group-hover:scale-110">+12.5%</p>
                     <p className="text-xs text-muted-foreground mt-1">Portfolio Today</p>
                   </CardContent>
                 </Card>
                 <Card 
                   onClick={() => router.push("/savings")}
-                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="modern-card modern-card-interactive hover:scale-105 transition-all duration-300 cursor-pointer group"
                 >
                   <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold">$1,234</p>
+                    <p className="text-2xl font-bold transition-transform duration-200 group-hover:scale-110">$1,234</p>
                     <p className="text-xs text-muted-foreground mt-1">Saved This Month</p>
                   </CardContent>
                 </Card>
                 <Card 
                   onClick={() => router.push("/cards")}
-                  className="modern-card hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="modern-card modern-card-interactive hover:scale-105 transition-all duration-300 cursor-pointer group"
                 >
                   <CardContent className="p-4 text-center">
-                    <p className="text-2xl font-bold text-success">2</p>
+                    <p className="text-2xl font-bold text-success transition-transform duration-200 group-hover:scale-110">2</p>
                     <p className="text-xs text-muted-foreground mt-1">Active Cards</p>
                   </CardContent>
                 </Card>
@@ -557,9 +559,11 @@ export default function FenixWallet() {
                             setSendData({...sendData, address: e.target.value});
                             if (errors.address) setErrors({...errors, address: ''});
                           }}
-                          className={`w-full p-3 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.address ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'}`}
+                          className={`w-full p-3 pr-10 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.address ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'} transform-gpu`}
                           aria-invalid={!!errors.address}
                           aria-describedby={errors.address ? 'address-error' : undefined}
+                          autoComplete="off"
+                          spellCheck="false"
                         />
                         {sendData.address && !errors.address && (
                           <svg className="absolute right-3 top-3.5 w-5 h-5 text-success animate-fade-in" fill="currentColor" viewBox="0 0 20 20">
@@ -596,11 +600,12 @@ export default function FenixWallet() {
                             if (errors.amount) setErrors({...errors, amount: ''});
                           }}
                           onFocus={(e) => e.target.select()}
-                          className={`w-full p-3 pr-16 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.amount ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'}`}
+                          className={`w-full p-3 pr-16 border rounded-lg bg-background text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.amount ? 'border-destructive shake-animation' : 'border-border/30 hover:border-border/50'} transform-gpu`}
                           aria-invalid={!!errors.amount}
                           aria-describedby={errors.amount ? 'amount-error' : undefined}
                           min="0"
                           step="0.01"
+                          inputMode="decimal"
                         />
                         <span className="absolute right-3 top-3 text-sm text-muted-foreground">USDT</span>
                       </div>
@@ -651,12 +656,15 @@ export default function FenixWallet() {
                       />
                     </div>
 
-                    <Button
-                      onClick={handleSendContinue}
-                      className="w-full h-12 modern-button bg-primary hover:bg-primary/90 text-primary-foreground focus-modern"
-                    >
-                      Review Transaction
-                    </Button>
+                      <Button
+                        onClick={handleSendContinue}
+                        className="w-full h-12 modern-button bg-primary hover:bg-primary/90 text-primary-foreground focus-modern group"
+                      >
+                        <span className="transition-transform duration-200 inline-block group-hover:translate-x-1">Review Transaction</span>
+                        <svg className="w-4 h-4 ml-2 inline-block transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -725,16 +733,16 @@ export default function FenixWallet() {
             )}
 
             {sendStep === 3 && (
-              <Card className="modern-card bg-card border border-border/30">
+              <Card className="modern-card bg-card border border-border/30 animate-scaleIn">
                 <CardContent className="p-8 text-center">
                   <div className="space-y-6">
-                    <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center animate-pulse">
                       <svg className="w-8 h-8 text-primary animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" strokeWidth={2} className="opacity-25" />
                         <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor" />
                       </svg>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 animate-slideInUp animation-delay-200">
                       <h3 className="text-lg font-semibold">Processing Transaction</h3>
                       <p className="text-sm text-muted-foreground">Please wait while we send your USDT...</p>
                       <div className="w-32 h-1 bg-muted rounded-full overflow-hidden mx-auto">
@@ -749,7 +757,7 @@ export default function FenixWallet() {
             {sendStep === 4 && (
               <>
                 <Confetti active={true} duration={3000} particleCount={100} />
-                <Card className="modern-card bg-gradient-to-br from-card via-success/5 to-card border border-success/30 animate-fade-in">
+                <Card className="modern-card bg-gradient-to-br from-card via-success/5 to-card border border-success/30 animate-scaleIn">
                   <CardContent className="p-8 text-center">
                     <div className="space-y-6">
                       <div className="w-20 h-20 mx-auto bg-gradient-to-br from-success/20 to-success/10 rounded-full flex items-center justify-center success-animation">
