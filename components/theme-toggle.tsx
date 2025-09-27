@@ -2,11 +2,13 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function ThemeToggle() {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setMounted(true);
@@ -59,6 +61,12 @@ export function ThemeToggle() {
 
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = currentTheme === 'dark';
+
+  // Responsive dimensions
+  const containerWidth = isMobile ? 56 : 72; // px
+  const containerHeight = isMobile ? 28 : 36; // px
+  const knobSize = isMobile ? 24 : 28; // px
+  const knobTranslate = isDark ? containerWidth - knobSize - 4 : 4; // 4px padding
 
   return (
     <>
@@ -119,8 +127,9 @@ export function ThemeToggle() {
       <button
         id="theme-toggle-button"
         onClick={handleThemeToggle}
+        style={{ width: containerWidth, height: containerHeight }}
         className={`
-          relative w-[72px] h-[36px] rounded-full transition-all duration-500 ease-in-out
+          relative rounded-full transition-all duration-500 ease-in-out
           ${isDark 
             ? 'bg-gradient-to-r from-slate-800 to-slate-900 border-slate-700/50 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)]' 
             : 'bg-gradient-to-r from-sky-400 to-blue-500 border-sky-300/50 shadow-[inset_0_2px_8px_rgba(255,255,255,0.3)]'
@@ -155,15 +164,20 @@ export function ThemeToggle() {
         {/* Toggle knob */}
         <span 
           className={`
-            absolute top-[4px] h-[28px] w-[28px] rounded-full 
+            absolute rounded-full flex items-center justify-center
             transition-all duration-500 ease-in-out transform
             ${isDark 
-              ? 'translate-x-[38px] bg-gradient-to-br from-gray-200 to-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_-1px_2px_rgba(0,0,0,0.1)]' 
-              : 'translate-x-[4px] bg-gradient-to-br from-yellow-100 to-orange-200 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_-1px_2px_rgba(0,0,0,0.1)]'
+              ? 'bg-gradient-to-br from-gray-200 to-gray-100 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_-1px_2px_rgba(0,0,0,0.1)]' 
+              : 'bg-gradient-to-br from-yellow-100 to-orange-200 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_-1px_2px_rgba(0,0,0,0.1)]'
             }
-            flex items-center justify-center
             ${isAnimating ? 'scale-110' : ''}
           `}
+          style={{
+            top: 4,
+            left: knobTranslate,
+            width: knobSize,
+            height: knobSize,
+          }}
         >
           {/* Icon container with rotation */}
           <div className={`absolute transition-all duration-500 ${isDark ? 'rotate-0' : 'rotate-180'}`}>
