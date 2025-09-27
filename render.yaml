@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: fenix-wallet
+    runtime: node
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20.18.1
+      - key: DATABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_PRIVY_APP_ID
+        sync: false
+      - key: PRIVY_APP_SECRET
+        sync: false
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+    healthCheckPath: /api/health
+    autoDeploy: false
