@@ -18,7 +18,8 @@ export default function Providers({ children }: PropsWithChildren) {
         attribute="class"
         defaultTheme="system"
         enableSystem
-        disableTransitionOnChange
+        storageKey="fenix-wallet-theme"
+        enableColorScheme
       >
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-6">
           <div className="max-w-2xl w-full space-y-6">
@@ -55,7 +56,8 @@ export default function Providers({ children }: PropsWithChildren) {
       attribute="class"
       defaultTheme="system"
       enableSystem
-      disableTransitionOnChange
+      storageKey="fenix-wallet-theme"
+      enableColorScheme
     >
       <PrivyProvider
         appId={privyAppId}

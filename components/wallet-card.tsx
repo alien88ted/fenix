@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface WalletCardProps {
   balance: string;
@@ -21,6 +22,7 @@ export function WalletCard({
   className 
 }: WalletCardProps) {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setIsAnimating(true);
@@ -28,18 +30,29 @@ export function WalletCard({
     return () => clearTimeout(timer);
   }, [balance]);
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      toast.success('Address copied to clipboard!');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast.error('Failed to copy address');
+    }
+  };
+
   if (isLoading) {
     return (
       <Card className={cn("modern-card bg-card border border-border/30", className)}>
         <CardContent className="p-8 text-center">
           <div className="space-y-4">
             <div className="space-y-1">
-              <Skeleton className="h-4 w-24 mx-auto" />
-              <Skeleton className="h-12 w-48 mx-auto" />
+              <Skeleton className="h-4 w-24 mx-auto bg-gradient-to-r from-muted to-muted/80" />
+              <Skeleton className="h-12 w-48 mx-auto bg-gradient-to-r from-muted to-muted/80" />
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Skeleton className="h-2 w-2 rounded-full" />
-              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-2 w-2 rounded-full bg-gradient-to-r from-muted to-muted/80" />
+              <Skeleton className="h-4 w-32 bg-gradient-to-r from-muted to-muted/80" />
             </div>
           </div>
         </CardContent>
@@ -49,32 +62,46 @@ export function WalletCard({
 
   return (
     <Card className={cn(
-      "modern-card bg-gradient-to-br from-card via-card to-primary/5 border border-border/30 transition-all duration-300",
-      "hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 hover:scale-[1.02]",
-      "focus-within:ring-2 focus-within:ring-primary/20 focus-within:ring-offset-2 focus-within:ring-offset-background",
+      "modern-card relative",
+      "bg-gradient-to-br from-card via-card/98 to-primary/[0.02]",
+      "dark:from-card dark:via-card/95 dark:to-primary/[0.05]",
+      "border border-border/40 dark:border-border/30",
+      "transition-all duration-500",
+      "hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10",
+      "hover:scale-[1.02] hover:-translate-y-1",
+      "before:absolute before:inset-0 before:rounded-2xl",
+      "before:bg-gradient-to-br before:from-primary/5 before:via-transparent before:to-accent/5",
+      "before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500",
       className
     )}>
       <CardContent className="p-8 text-center relative overflow-hidden">
-        {/* Animated background gradient */}
-        <div className="absolute inset-0 opacity-50">
-          <div className="absolute top-0 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 -right-4 w-32 h-32 bg-primary/5 rounded-full blur-3xl animate-pulse delay-700" />
+        {/* Premium animated background effects */}
+        <div className="absolute inset-0 opacity-30 dark:opacity-20">
+          <div className="absolute top-0 -left-8 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl animate-float-smooth" />
+          <div className="absolute bottom-0 -right-8 w-40 h-40 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl animate-float-smooth animation-delay-600" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 rounded-full blur-3xl animate-pulse" />
         </div>
         
         <div className="space-y-4 relative z-10">
           <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider opacity-80">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.15em] opacity-70">
               Total Balance
             </p>
             <div className={cn(
-              "text-5xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent tracking-tight leading-none transition-all duration-500",
-              isAnimating && "scale-110 text-primary"
+              "relative inline-block",
+              "transition-all duration-500 transform-gpu",
+              isAnimating && "scale-110"
             )}>
-              <span className="inline-block transition-all duration-300 hover:scale-105">
-                ${balance}
-              </span>
+              <div className="text-5xl sm:text-6xl font-bold tracking-tight leading-none">
+                <span className="bg-gradient-to-br from-foreground via-foreground/90 to-foreground/80 dark:from-foreground dark:via-foreground/95 dark:to-foreground/85 bg-clip-text text-transparent">
+                  ${balance}
+                </span>
+              </div>
+              {isAnimating && (
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-xl animate-pulse" />
+              )}
             </div>
-            <p className="text-xs text-muted-foreground/60">
+            <p className="text-xs text-muted-foreground/60 font-medium">
               ≈ {balance} USDT
             </p>
           </div>
@@ -82,15 +109,15 @@ export function WalletCard({
           <div className="flex items-center justify-center gap-3 py-2">
             <div className="relative flex items-center gap-2">
               <div className="relative">
-                <div className="w-2 h-2 bg-success rounded-full" />
-                <div className="absolute inset-0 w-2 h-2 bg-success rounded-full animate-ping" />
-                <div className="absolute inset-0 w-2 h-2 bg-success/50 rounded-full animate-ping animation-delay-200" />
+                <div className="w-2.5 h-2.5 bg-gradient-to-br from-success to-success/80 rounded-full shadow-lg shadow-success/50" />
+                <div className="absolute inset-0 w-2.5 h-2.5 bg-success rounded-full animate-ping" />
+                <div className="absolute inset-0 w-2.5 h-2.5 bg-success/50 rounded-full animate-ping animation-delay-200" />
               </div>
-              <span className="text-xs font-medium text-success">
+              <span className="text-xs font-semibold text-success">
                 Active
               </span>
             </div>
-            <div className="w-px h-4 bg-border/30" />
+            <div className="w-px h-4 bg-gradient-to-b from-transparent via-border/50 to-transparent" />
             <span className="text-xs font-medium text-muted-foreground">
               {network}
             </span>
@@ -99,16 +126,30 @@ export function WalletCard({
           {address && (
             <div className="pt-3 border-t border-border/20">
               <button
-                className="group flex items-center gap-2 mx-auto px-3 py-1.5 rounded-full bg-muted/30 hover:bg-muted/50 transition-all duration-200"
-                onClick={() => navigator.clipboard.writeText(address)}
+                className={cn(
+                  "group relative flex items-center gap-2 mx-auto px-4 py-2 rounded-full",
+                  "bg-gradient-to-br from-muted/20 to-muted/30",
+                  "hover:from-muted/30 hover:to-muted/40",
+                  "border border-border/20 hover:border-primary/30",
+                  "transition-all duration-300",
+                  "hover:scale-105 hover:shadow-lg hover:shadow-primary/10",
+                  copied && "ring-2 ring-success/50 bg-success/10"
+                )}
+                onClick={handleCopy}
                 aria-label="Copy wallet address"
               >
-                <p className="text-xs text-muted-foreground font-mono">
+                <p className="text-xs text-muted-foreground font-mono font-medium">
                   {address.slice(0, 6)}...{address.slice(-4)}
                 </p>
-                <svg className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
+                {copied ? (
+                  <svg className="w-3.5 h-3.5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
               </button>
             </div>
           )}
