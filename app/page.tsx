@@ -19,8 +19,7 @@ import { Confetti } from "@/components/ui/confetti"
 export default function FenixWallet() {
   const { ready, authenticated, user } = usePrivy()
   const { login } = useLogin({
-    onComplete: async (user, isNewUser) => {
-      console.log('User authenticated:', user.id)
+    onComplete: ({ user, isNewUser }) => {
       // Wallet data will be auto-synced by useWalletData hook
     },
   })
@@ -46,7 +45,7 @@ export default function FenixWallet() {
   const [serviceStep, setServiceStep] = useState(1) // For service flows
   const [sendData, setSendData] = useState({ address: "", amount: "", memo: "" })
   const [serviceData, setServiceData] = useState({ type: "", amount: "", details: "" })
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [copied, setCopied] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
@@ -82,7 +81,7 @@ export default function FenixWallet() {
   }
 
   const validateSendForm = () => {
-    const newErrors = {}
+    const newErrors: Record<string, string> = {}
     if (!sendData.address.trim()) {
       newErrors.address = "Address is required"
     } else if (!sendData.address.match(/^0x[a-fA-F0-9]{40}$/)) {
@@ -122,19 +121,11 @@ export default function FenixWallet() {
       // Send real transaction via PLASMA network
       const wallet = privyWallets[0]
       if (wallet && wallet.address) {
-        console.log('Sending transaction:', {
-          from: wallet.address,
-          to: sendData.address,
-          amount: sendData.amount
-        })
-
         const txResult = await plasmaAPI.sendTransaction(
           wallet.address,
           sendData.address,
           sendData.amount
         )
-
-        console.log('Transaction sent:', txResult)
 
         // Update UI to success
         setIsTransitioning(true)

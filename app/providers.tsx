@@ -62,16 +62,22 @@ export default function Providers({ children }: PropsWithChildren) {
         config={{
         // CRITICAL: Create embedded wallets for ALL users automatically
         embeddedWallets: {
-          createOnLogin: 'all-users', // This ensures EVERY user gets an embedded wallet
-          requireUserPasswordOnCreate: false, // Don't require password for smoother UX
+          ethereum: {
+            createOnLogin: 'all-users' as const, // This ensures EVERY user gets an embedded wallet
+          },
           showWalletUIs: true,
         },
         
         // Comprehensive login methods
-        loginMethods: config.loginMethods,
+        loginMethods: config.loginMethods as any,
         
         // Professional appearance
-        appearance: config.appearance,
+        appearance: {
+          theme: config.appearance.theme as 'light' | 'dark',
+          accentColor: config.appearance.accentColor as `#${string}`,
+          logo: config.appearance.logo,
+          showWalletLoginFirst: config.appearance.showWalletLoginFirst,
+        },
         
         // Wallet configuration with XPL support
         walletConnectCloudProjectId: config.walletConnectCloudProjectId,
@@ -80,7 +86,12 @@ export default function Providers({ children }: PropsWithChildren) {
         mfa: config.security.mfa,
         
         // External wallet support
-        externalWallets: config.externalWallets,
+        externalWallets: {
+          coinbaseWallet: {},
+          walletConnect: {
+            enabled: !!config.externalWallets.walletConnect.projectId,
+          },
+        },
         
         // Legal compliance
         legal: {

@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
     try {
       privyUser = await privyClient.verifyAuthToken(idToken);
     } catch (error) {
-      console.error('Token verification failed:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
@@ -135,7 +134,6 @@ export async function POST(req: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Wallet sync error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to sync wallets' },
       { status: 500 }

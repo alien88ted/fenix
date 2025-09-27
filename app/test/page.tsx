@@ -59,7 +59,7 @@ export default function TestPage() {
       handleError(error);
       setTestResults(prev => ({
         ...prev,
-        privyAuth: { success: false, error: error.message }
+        privyAuth: { success: false, error: error instanceof Error ? error.message : String(error) }
       }));
     }
   };
@@ -81,7 +81,7 @@ export default function TestPage() {
       handleError(error);
       setTestResults(prev => ({
         ...prev,
-        walletCreation: { success: false, error: error.message }
+        walletCreation: { success: false, error: error instanceof Error ? error.message : String(error) }
       }));
     }
   };
@@ -109,7 +109,7 @@ export default function TestPage() {
       handleError(error);
       setTestResults(prev => ({
         ...prev,
-        blockchain: { success: false, error: error.message }
+        blockchain: { success: false, error: error instanceof Error ? error.message : String(error) }
       }));
     }
   };
@@ -134,7 +134,7 @@ export default function TestPage() {
       handleError(error);
       setTestResults(prev => ({
         ...prev,
-        database: { success: false, error: error.message }
+        database: { success: false, error: error instanceof Error ? error.message : String(error) }
       }));
     }
   };
@@ -170,7 +170,7 @@ export default function TestPage() {
       handleError(error);
       setTestResults(prev => ({
         ...prev,
-        transaction: { success: false, error: error.message }
+        transaction: { success: false, error: error instanceof Error ? error.message : String(error) }
       }));
     }
   };

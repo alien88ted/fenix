@@ -125,7 +125,7 @@ export const PRIVY_CONFIG = {
 export function getPrivyConfig() {
   // Add runtime validations
   if (!process.env.NEXT_PUBLIC_PRIVY_APP_ID) {
-    console.warn('Privy App ID not configured');
+    // Privy App ID not configured
   }
   
   return {

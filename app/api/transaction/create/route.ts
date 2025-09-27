@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     try {
       privyAuth = await privyClient.verifyAuthToken(idToken);
     } catch (error) {
-      console.error('Token verification failed:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
@@ -154,7 +153,6 @@ export async function POST(req: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Transaction creation error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create transaction' },
       { status: 500 }

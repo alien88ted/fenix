@@ -144,7 +144,7 @@ export default function FlowTestPage() {
           }
         }
       } catch (err) {
-        addLog('warn', 'Could not reach health endpoint', { error: err.message });
+        addLog('warn', 'Could not reach health endpoint', { error: (err as Error).message });
         hasPrivySecret = false;
       }
 
@@ -158,7 +158,7 @@ export default function FlowTestPage() {
         hasDatabaseUrl: !!process.env.DATABASE_URL,
         isProduction: process.env.NODE_ENV === 'production',
         isDevelopment: process.env.NODE_ENV === 'development',
-        warnings: [],
+        warnings: [] as string[],
       };
 
       // Add warnings for missing/invalid credentials
@@ -220,10 +220,10 @@ export default function FlowTestPage() {
         return true;
       }
     } catch (error) {
-      addLog('error', 'Environment check failed', error);
+      addLog('error', 'Environment check failed', error instanceof Error ? error.message : String(error));
       updateStep('env', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -261,10 +261,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Privy auth test failed', error);
+      addLog('error', 'Privy auth test failed', error instanceof Error ? error.message : String(error));
       updateStep('privy', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -293,10 +293,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Database test failed', error);
+      addLog('error', 'Database test failed', error instanceof Error ? error.message : String(error));
       updateStep('db', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -354,10 +354,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Wallet sync failed', error);
+      addLog('error', 'Wallet sync failed', error instanceof Error ? error.message : String(error));
       updateStep('wallet-sync', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -414,10 +414,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Wallet creation failed', error);
+      addLog('error', 'Wallet creation failed', error instanceof Error ? error.message : String(error));
       updateStep('wallet-create', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -459,10 +459,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('warn', 'Blockchain test failed (this is normal for test networks)', error);
+      addLog('warn', 'Blockchain test failed (this is normal for test networks)', error instanceof Error ? error.message : String(error));
       updateStep('blockchain', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false; // Don't stop the flow for this
@@ -497,10 +497,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('warn', 'Balance fetch failed (normal for new wallets)', error);
+      addLog('warn', 'Balance fetch failed (normal for new wallets)', error instanceof Error ? error.message : String(error));
       updateStep('balance', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return true; // Don't stop flow
@@ -544,10 +544,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Transaction creation failed', error);
+      addLog('error', 'Transaction creation failed', error instanceof Error ? error.message : String(error));
       updateStep('tx-create', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -581,10 +581,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Transaction fetch failed', error);
+      addLog('error', 'Transaction fetch failed', error instanceof Error ? error.message : String(error));
       updateStep('tx-fetch', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -625,10 +625,10 @@ export default function FlowTestPage() {
         throw new Error(`API returned ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      addLog('error', 'API sync test failed', error);
+      addLog('error', 'API sync test failed', error instanceof Error ? error.message : String(error));
       updateStep('api-sync', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -667,10 +667,10 @@ export default function FlowTestPage() {
         throw new Error(`API returned ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      addLog('error', 'API transaction test failed', error);
+      addLog('error', 'API transaction test failed', error instanceof Error ? error.message : String(error));
       updateStep('api-tx', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -699,10 +699,10 @@ export default function FlowTestPage() {
         duration: Date.now() - startTime 
       });
     } catch (error) {
-      addLog('error', 'Theme test failed', error);
+      addLog('error', 'Theme test failed', error instanceof Error ? error.message : String(error));
       updateStep('ui-theme', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
     }
@@ -731,10 +731,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Toast test failed', error);
+      addLog('error', 'Toast test failed', error instanceof Error ? error.message : String(error));
       updateStep('ui-toast', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -763,10 +763,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Export test failed', error);
+      addLog('error', 'Export test failed', error instanceof Error ? error.message : String(error));
       updateStep('export', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -802,10 +802,10 @@ export default function FlowTestPage() {
       });
       return true;
     } catch (error) {
-      addLog('error', 'Cleanup failed', error);
+      addLog('error', 'Cleanup failed', error instanceof Error ? error.message : String(error));
       updateStep('cleanup', { 
         status: 'failed', 
-        error: error.message, 
+        error: error instanceof Error ? error.message : String(error), 
         duration: Date.now() - startTime 
       });
       return false;
@@ -848,7 +848,7 @@ export default function FlowTestPage() {
         await test();
         await sleep(500); // Small delay between tests
       } catch (error) {
-        addLog('error', `Test failed with unexpected error: ${error.message}`);
+        addLog('error', `Test failed with unexpected error: ${error instanceof Error ? error.message : String(error)}`);
       }
       currentProgress += progressIncrement;
       setProgress(Math.min(currentProgress, 100));
