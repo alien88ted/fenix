@@ -366,20 +366,20 @@ export default function FenixWallet() {
   return (
     <div className="min-h-screen bg-background">
       <header className="glass border-b border-border/20 relative z-50 backdrop-blur-xl" role="banner">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 max-w-sm mx-auto lg:max-w-2xl">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-4 max-w-sm mx-auto lg:max-w-2xl">
+          <div className="flex items-center gap-2 sm:gap-3">
             {currentView !== "home" && renderBackButton()}
             <img
               src="/fenix-logo.png"
               alt="Fenix"
-              width={32}
-              height={32}
-              className="logo-hover transition-all duration-150"
+              width={28}
+              height={28}
+              className="logo-hover transition-all duration-150 w-7 h-7 sm:w-8 sm:h-8"
             />
             {currentView !== "home" && (
               <>
-                <div className="h-6 w-px bg-border/30" />
-                <h1 className="text-base font-medium text-foreground/90">
+                <div className="h-5 sm:h-6 w-px bg-border/30" />
+                <h1 className="text-sm sm:text-base font-medium text-foreground/90 truncate max-w-[120px] sm:max-w-none">
                   {currentView === "send" && "Send USDT"}
                   {currentView === "receive" && "Receive"}
                   {currentView === "services" && "Services"}
@@ -391,14 +391,14 @@ export default function FenixWallet() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
             <UserDropdown />
           </div>
         </div>
       </header>
 
-      <main className={`max-w-sm mx-auto lg:max-w-2xl px-4 sm:px-6 py-6 sm:py-8 transition-all duration-150 ${isTransitioning ? 'opacity-70 scale-[0.98]' : 'opacity-100 scale-100'}`} role="main">
+      <main className={`max-w-sm mx-auto lg:max-w-2xl px-3 sm:px-6 py-4 sm:py-8 transition-all duration-150 ${isTransitioning ? 'opacity-70 scale-[0.98]' : 'opacity-100 scale-100'}`} role="main">
         {currentView === "home" && (
           <div className="space-y-8">
             <section aria-labelledby="balance-heading" className="fade-in">
@@ -408,25 +408,25 @@ export default function FenixWallet() {
                 address={walletAddress}
                 network="Secure Network"
                 isLoading={isLoadingWallets}
-                className="animate-slide-up card-hover"
+                className="animate-slide-up card-hover touch-manipulation"
               />
             </section>
 
             <section aria-labelledby="primary-actions-heading" className="fade-in" style={{animationDelay: '0.1s'}}>
               <h2 id="primary-actions-heading" className="sr-only">Primary Actions</h2>
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 stagger-animation">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4 stagger-animation">
                 {mainActions.map((action, index) => (
                   <Button
                     key={index}
                     onClick={action.action}
-                    className="h-20 sm:h-24 flex-col gap-2 modern-button bg-card hover:bg-secondary/50 active:bg-secondary/60 border border-border/30 text-card-foreground hover:text-foreground focus-modern touch-manipulation"
+                    className="h-[72px] sm:h-24 flex-col gap-1.5 sm:gap-2 modern-button bg-card hover:bg-secondary/50 active:bg-secondary/60 border border-border/30 text-card-foreground hover:text-foreground focus-modern touch-manipulation p-2 sm:p-4"
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
                   >
-                    <div className="text-primary scale-90 sm:scale-100">{action.icon}</div>
+                    <div className="text-primary scale-75 sm:scale-100">{action.icon}</div>
                     <div className="text-center">
-                      <div className="font-semibold text-xs sm:text-sm">{action.title}</div>
+                      <div className="font-semibold text-[11px] sm:text-sm">{action.title}</div>
                     </div>
                   </Button>
                 ))}
@@ -435,16 +435,16 @@ export default function FenixWallet() {
 
             <section aria-labelledby="secondary-actions-heading" className="fade-in" style={{animationDelay: '0.2s'}}>
               <h2 id="secondary-actions-heading" className="sr-only">More Services</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {secondaryActions.map((action, index) => (
                   <Button
                     key={index}
                     onClick={action.action}
-                    className={`h-24 flex-col gap-2 modern-button ${
+                    className={`h-20 sm:h-24 flex-col gap-1.5 sm:gap-2 modern-button ${
                       action.highlight 
                         ? "bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 border-primary/30" 
                         : "bg-card hover:bg-secondary/50 border-border/30"
-                    } text-card-foreground hover:text-foreground focus-modern p-4 relative overflow-hidden group`}
+                    } text-card-foreground hover:text-foreground focus-modern p-3 sm:p-4 relative overflow-hidden group touch-manipulation`}
                     variant="outline"
                     role="button"
                     aria-label={`${action.title}: ${action.description}`}
