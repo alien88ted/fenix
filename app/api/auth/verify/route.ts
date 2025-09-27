@@ -59,7 +59,10 @@ export async function POST(req: NextRequest) {
             userId: user.id,
             address: privyUser.wallet.address,
             type: 'EMBEDDED',
-            chainId: privyUser.wallet.chainId || 1,
+            chainId:
+              typeof privyUser.wallet.chainId === 'string'
+                ? parseInt(privyUser.wallet.chainId, 10)
+                : privyUser.wallet.chainId ?? 1,
             isDefault: true,
           },
         });
