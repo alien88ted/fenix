@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fenix Logo Download - Twitter Profile Picture</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .logo-preview {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .instructions ol {
+            color: #666;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .mobile-note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .logo-preview {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Fenix Logo</h1>
+        <p class="subtitle">Perfect for Twitter Profile Picture</p>
+        
+        <div class="logo-preview">
+            <img id="logoImg" src="" alt="Fenix Logo">
+        </div>
+        
+        <a id="downloadLink" class="download-btn" download="fenix-logo.png">
+            📥 Download PNG
+        </a>
+        
+        <div class="mobile-note">
+            <strong>📱 Mobile Users:</strong> Tap and hold the image above, then select "Save Image" or click the download button.
+        </div>
+        
+        <div class="instructions">
+            <h3>How to use as Twitter profile picture:</h3>
+            <ol>
+                <li>Download the image using the button above</li>
+                <li>Open Twitter app or website</li>
+                <li>Go to your profile settings</li>
+                <li>Click "Edit profile"</li>
+                <li>Tap on your current profile picture</li>
+                <li>Select the downloaded Fenix logo from your gallery</li>
+                <li>Adjust positioning if needed and save</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Load base64 image data
+        fetch('fenix_logo_base64.txt')
+            .then(response => response.text())
+            .then(base64Data => {
+                const imgElement = document.getElementById('logoImg');
+                const downloadLink = document.getElementById('downloadLink');
+                const dataUrl = 'data:image/png;base64,' + base64Data.trim();
+                
+                imgElement.src = dataUrl;
+                downloadLink.href = dataUrl;
+            })
+            .catch(error => {
+                console.error('Error loading image:', error);
+                // Fallback: try to load directly
+                document.getElementById('logoImg').src = 'public/fenix-logo.png';
+                document.getElementById('downloadLink').href = 'public/fenix-logo.png';
+            });
+    </script>
+</body>
+</html>
