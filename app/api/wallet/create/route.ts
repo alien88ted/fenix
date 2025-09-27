@@ -55,9 +55,12 @@ export async function POST(req: NextRequest) {
     }
     
     // Create wallet via Privy API
-    const updatedUser = await privyClient.createWallet({
+    const updatedUser = await privyClient.createWallets({
       userId: privyAuth.userId,
-      chainType,
+      // Determine which wallet to create based on chainType
+      createEthereumWallet: chainType === 'ethereum' && !createSmartWallet,
+      createSolanaWallet: chainType === 'solana',
+      createEthereumSmartWallet: chainType === 'ethereum' && createSmartWallet,
     });
     
     // Find the newly created wallet
