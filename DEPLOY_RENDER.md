@@ -40,6 +40,7 @@ Before deploying to Render, you need:
    - Runtime: Node
    - Build Command: `npm ci && npx prisma generate && npm run build`
    - Start Command: `npm start`
+   - Node Version: 20.18.1 (set in Environment Variables)
    - Auto-Deploy: Yes (optional)
 
 3. **Set Environment Variables**
@@ -80,8 +81,12 @@ After first deployment, you need to run migrations:
 
 ## Common Issues and Solutions
 
-### Issue: Build fails immediately
-**Solution**: Check that all environment variables are set correctly
+### Issue: Build fails immediately / Deploy status 1 with no logs
+**Solution**: 
+- Ensure using `npm` (not `pnpm`) in render.yaml
+- Check that `package-lock.json` is committed
+- Verify all environment variables are set correctly
+- Clear build cache and redeploy
 
 ### Issue: "Database connection failed"
 **Solution**: 

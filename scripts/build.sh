@@ -5,7 +5,7 @@ echo "Starting build process..."
 
 # Install dependencies
 echo "Installing dependencies..."
-npm install
+npm ci
 
 # Generate Prisma client
 echo "Generating Prisma client..."

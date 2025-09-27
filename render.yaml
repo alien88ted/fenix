@@ -2,8 +2,8 @@ services:
   - type: web
     name: fenix-wallet
     runtime: node
-    buildCommand: pnpm install --frozen-lockfile && pnpm prisma generate && pnpm run build
-    startCommand: pnpm start
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
