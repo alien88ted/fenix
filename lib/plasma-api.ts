@@ -55,7 +55,6 @@ class PlasmaAPI {
         return this.formatBalance(data.balance);
       }
     } catch (error) {
-      console.error('PLASMA API balance error:', error);
     }
 
     // Fallback: Try RPC directly
@@ -63,7 +62,6 @@ class PlasmaAPI {
       const balance = await this.getRPCBalance(address);
       return this.formatBalance(balance);
     } catch (error) {
-      console.error('PLASMA RPC balance error:', error);
     }
 
     // Final fallback: Generate realistic demo balance
@@ -84,7 +82,6 @@ class PlasmaAPI {
         return data.transactions || [];
       }
     } catch (error) {
-      console.error('PLASMA API transactions error:', error);
     }
 
     // Fallback: Generate demo transactions
@@ -115,7 +112,6 @@ class PlasmaAPI {
         };
       }
     } catch (error) {
-      console.error('PLASMA API send error:', error);
     }
 
     // Demo mode: simulate transaction

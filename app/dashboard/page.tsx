@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePrivy, useWallets, usePrivyWagmi } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,16 +47,13 @@ export default function Dashboard() {
     setIsExporting(true);
     try {
       // For embedded wallets, use Privy's export functionality
-      if (activeWallet.walletClient === 'privy') {
-        const exportedWallet = await exportWallet();
-        if (exportedWallet) {
-          setExportedKey(exportedWallet.privateKey);
-        }
+      if (activeWallet.type === 'EMBEDDED') {
+        await exportWallet();
+        // Export flow handled by Privy UI
       } else {
         alert('Key export is only available for embedded wallets');
       }
     } catch (error) {
-      console.error('Failed to export wallet:', error);
       alert('Failed to export wallet. Please try again.');
     } finally {
       setIsExporting(false);
@@ -249,7 +246,7 @@ export default function Dashboard() {
                       <div key={index} className="flex items-center justify-between p-2 border rounded">
                         <div>
                           <p className="text-sm font-medium">{tx.type}</p>
-                          <p className="text-xs text-muted-foreground">{tx.date}</p>
+                          <p className="text-xs text-muted-foreground">{tx.createdAt}</p>
                         </div>
                         <span className="text-sm font-bold">{tx.amount} USDT</span>
                       </div>

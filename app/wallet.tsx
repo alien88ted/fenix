@@ -18,7 +18,7 @@ export default function FenixWallet() {
   const [currentView, setCurrentView] = useState("home") // home, send, receive, services
   const [sendStep, setSendStep] = useState(1) // 1: form, 2: confirm, 3: processing, 4: success
   const [sendData, setSendData] = useState({ address: "", amount: "", memo: "" })
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [copied, setCopied] = useState(false)
   const [walletAddress] = useState("0x742d35Cc32C15e8A4BfFB9a1BfFbF2c8f9A1bC3d")
 
@@ -35,7 +35,7 @@ export default function FenixWallet() {
   }
 
   const validateSendForm = () => {
-    const newErrors = {}
+    const newErrors: Record<string, string> = {}
     if (!sendData.address.trim()) {
       newErrors.address = "Address is required"
     } else if (!sendData.address.match(/^0x[a-fA-F0-9]{40}$/)) {
@@ -77,7 +77,7 @@ export default function FenixWallet() {
     }, 3000)
   }
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
@@ -295,7 +295,12 @@ export default function FenixWallet() {
 }
 
 // Home View Component
-function HomeView({ balance, wallets, mainActions, secondaryActions }) {
+function HomeView({ balance, wallets, mainActions, secondaryActions }: { 
+  balance: string; 
+  wallets: any[]; 
+  mainActions: any[]; 
+  secondaryActions: any[] 
+}) {
   return (
     <div className="space-y-8">
       <section aria-labelledby="balance-heading">
@@ -381,7 +386,17 @@ function HomeView({ balance, wallets, mainActions, secondaryActions }) {
 }
 
 // Send Flow Component
-function SendView({ sendStep, sendData, errors, balance, walletAddress, setSendData, handleSendContinue, handleSendConfirm, setSendStep }) {
+function SendView({ sendStep, sendData, errors, balance, walletAddress, setSendData, handleSendContinue, handleSendConfirm, setSendStep }: {
+  sendStep: number;
+  sendData: { address: string; amount: string; memo: string };
+  errors: Record<string, string>;
+  balance: string;
+  walletAddress: string;
+  setSendData: (data: any) => void;
+  handleSendContinue: () => void;
+  handleSendConfirm: () => void;
+  setSendStep: (step: number) => void;
+}) {
   return (
     <div className="space-y-6">
       {sendStep === 1 && <SendFormStep sendData={sendData} errors={errors} balance={balance} walletAddress={walletAddress} setSendData={setSendData} handleSendContinue={handleSendContinue} />}
@@ -392,7 +407,14 @@ function SendView({ sendStep, sendData, errors, balance, walletAddress, setSendD
   )
 }
 
-function SendFormStep({ sendData, errors, balance, walletAddress, setSendData, handleSendContinue }) {
+function SendFormStep({ sendData, errors, balance, walletAddress, setSendData, handleSendContinue }: {
+  sendData: { address: string; amount: string; memo: string };
+  errors: Record<string, string>;
+  balance: string;
+  walletAddress: string;
+  setSendData: (data: any) => void;
+  handleSendContinue: () => void;
+}) {
   return (
     <Card className="modern-card bg-card border border-border/30">
       <CardContent className="p-6">
@@ -467,7 +489,11 @@ function SendFormStep({ sendData, errors, balance, walletAddress, setSendData, h
   )
 }
 
-function SendConfirmStep({ sendData, handleSendConfirm, setSendStep }) {
+function SendConfirmStep({ sendData, handleSendConfirm, setSendStep }: {
+  sendData: { address: string; amount: string; memo: string };
+  handleSendConfirm: () => void;
+  setSendStep: (step: number) => void;
+}) {
   return (
     <Card className="modern-card bg-card border border-border/30">
       <CardContent className="p-6">
@@ -542,7 +568,7 @@ function SendProcessingStep() {
   )
 }
 
-function SendSuccessStep({ sendData }) {
+function SendSuccessStep({ sendData }: { sendData: { address: string; amount: string; memo: string } }) {
   return (
     <Card className="modern-card bg-card border border-border/30">
       <CardContent className="p-8 text-center">
@@ -567,7 +593,12 @@ function SendSuccessStep({ sendData }) {
 }
 
 // Receive View Component
-function ReceiveView({ wallets, walletAddress, copied, copyToClipboard }) {
+function ReceiveView({ wallets, walletAddress, copied, copyToClipboard }: {
+  wallets: any[];
+  walletAddress: string;
+  copied: boolean;
+  copyToClipboard: (text: string) => void;
+}) {
   const address = wallets.length > 0 ? wallets[0]?.address : walletAddress
 
   return (

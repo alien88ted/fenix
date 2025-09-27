@@ -70,7 +70,6 @@ export async function getNativeBalance(address: string, chainId: number = 1): Pr
     
     return formatEther(balance);
   } catch (error) {
-    console.error('Error fetching native balance:', error);
     return '0';
   }
 }
@@ -86,7 +85,6 @@ export async function getTokenBalance(
     const tokenAddress = tokenContracts?.[chainId as keyof typeof tokenContracts];
     
     if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
-      console.warn(`Token ${tokenSymbol} not supported on chain ${chainId}`);
       return '0';
     }
 
@@ -108,12 +106,11 @@ export async function getTokenBalance(
     });
     
     // Format balance with correct decimals
-    const divisor = BigInt(10) ** BigInt(decimals);
-    const formattedBalance = Number(balance) / Number(divisor);
+    const divisor = 10 ** Number(decimals);
+    const formattedBalance = Number(balance) / divisor;
     
     return formattedBalance.toFixed(6);
   } catch (error) {
-    console.error(`Error fetching ${tokenSymbol} balance:`, error);
     return '0';
   }
 }
@@ -134,7 +131,6 @@ export async function getAllBalances(address: string, chainId: number = 1) {
       PLASMA: '0', // Placeholder for PLASMA token
     };
   } catch (error) {
-    console.error('Error fetching all balances:', error);
     return {
       native: '0',
       USDT: '0',
@@ -168,7 +164,6 @@ export async function getTransactionStatus(txHash: string, chainId: number = 1) 
       effectiveGasPrice: receipt.effectiveGasPrice?.toString(),
     };
   } catch (error) {
-    console.error('Error fetching transaction status:', error);
     return { status: 'PENDING', confirmations: 0 };
   }
 }
@@ -197,7 +192,6 @@ export async function estimateGas(
       estimatedCost: formatEther(gasEstimate * gasPrice),
     };
   } catch (error) {
-    console.error('Error estimating gas:', error);
     return null;
   }
 }

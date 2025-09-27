@@ -2,33 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { getAllBalances } from '@/lib/blockchain';
 import { handleError, handleSuccess } from '@/lib/utils/error-handler';
+import type { Wallet, Transaction, TokenBalances } from '@/types';
 
-export interface WalletData {
-  address: string;
-  type: 'EMBEDDED' | 'EXTERNAL' | 'IMPORTED';
-  chainId: number;
-  isDefault: boolean;
-  label?: string;
-  balance?: string;
-  balances?: {
-    native: string;
-    USDT: string;
-    XPL: string;
-    PLASMA: string;
-  };
-}
-
-export interface TransactionData {
-  id: string;
-  fromAddress: string;
-  toAddress: string;
-  amount: string;
-  currency: string;
-  type: string;
-  status: string;
-  txHash?: string;
-  createdAt: string;
-}
+// Type aliases for backwards compatibility
+export type WalletData = Wallet;
+export type TransactionData = Transaction;
 
 export function useWalletData() {
   const { ready, authenticated, user, getAccessToken } = usePrivy();

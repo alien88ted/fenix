@@ -89,7 +89,6 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Balance fetch error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch balance' },
       { status: 500 }

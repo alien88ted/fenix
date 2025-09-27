@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             userId: user.id,
             address: privyUser.wallet.address,
             type: 'EMBEDDED',
-            chainId: privyUser.wallet.chainId || 1,
+            chainId: Number(privyUser.wallet.chainId) || 1,
             isDefault: true,
           },
         });
@@ -112,7 +112,6 @@ export async function POST(req: NextRequest) {
     
     return response;
   } catch (error) {
-    console.error('Auth verification error:', error);
     const prismaError = handlePrismaError(error);
     return NextResponse.json(
       { error: prismaError.error || 'Authentication failed' },

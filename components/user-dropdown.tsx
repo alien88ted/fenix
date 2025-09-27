@@ -33,7 +33,7 @@ export function UserDropdown() {
       return;
     }
 
-    const embeddedWallet = wallets.find(w => w.walletClient === 'privy');
+    const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
     if (!embeddedWallet) {
       alert('Key export is only available for embedded wallets');
       return;
@@ -41,22 +41,9 @@ export function UserDropdown() {
 
     setIsExporting(true);
     try {
-      const exportedWallet = await exportWallet();
-      if (exportedWallet?.privateKey) {
-        // Create a temporary textarea to copy the key
-        const textarea = document.createElement('textarea');
-        textarea.value = exportedWallet.privateKey;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        
-        alert('Private key copied to clipboard! Keep it safe and never share it.');
-      }
+      await exportWallet();
+      // Export flow handled by Privy UI
     } catch (error) {
-      console.error('Failed to export key:', error);
       alert('Failed to export key. Please try again.');
     } finally {
       setIsExporting(false);
@@ -182,7 +169,7 @@ export function UserDropdown() {
             </button>
 
 
-            {wallets.some(w => w.walletClient === 'privy') && (
+            {wallets.some(w => w.walletClientType === 'privy') && (
               <button
                 onClick={handleExportKey}
                 disabled={isExporting}

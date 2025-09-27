@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
     try {
       privyAuth = await privyClient.verifyAuthToken(idToken);
     } catch (error) {
-      console.error('Token verification failed:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
@@ -55,18 +54,18 @@ export async function POST(req: NextRequest) {
     }
     
     // Create wallet via Privy API
-    const updatedUser = await privyClient.createWallet({
+    const updatedUser = await privyClient.createWallets({
       userId: privyAuth.userId,
-      chainType,
     });
     
     // Find the newly created wallet
     const newWallet = updatedUser.linkedAccounts.find(
-      account => 
+      (account: any) => 
         account.type === 'wallet' && 
         account.walletClientType === 'privy' &&
+        'address' in account &&
         !user.wallets.some(w => w.address.toLowerCase() === account.address.toLowerCase())
-    );
+    ) as any;
     
     if (!newWallet) {
       return NextResponse.json(
@@ -93,7 +92,6 @@ export async function POST(req: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Wallet creation error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create wallet' },
       { status: 500 }

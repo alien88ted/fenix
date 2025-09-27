@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
     try {
       privyAuth = await privyClient.verifyAuthToken(idToken);
     } catch (error) {
-      console.error('Token verification failed:', error);
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
@@ -136,7 +135,6 @@ export async function GET(req: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Transaction list error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch transactions' },
       { status: 500 }
